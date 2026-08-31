@@ -6,7 +6,7 @@
   <title>5. 직육면체 | AIDT 수업 화면 (데모)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" />
-  <link rel="stylesheet" href="css/style.css?v=png49" />
+  <link rel="stylesheet" href="css/style.css?v=png67" />
 </head>
 <body class="is-demo">
   <div class="app">
@@ -18,9 +18,8 @@
         <div class="title-wrap">
           <div class="title-row">
             <h1>5. 직육면체</h1>
-            <span class="demo-badge" title="에듀테크 코리아페어 전시용 데모입니다. 실제 AIDT 수업 화면과 기능·모양이 다를 수 있습니다.">데모</span>
           </div>
-          <p>공부한 내용을 확인해요 <span class="demo-note">· 실제 수업 화면과 다를 수 있습니다</span></p>
+          <p>공부한 내용을 확인해요</p>
         </div>
       </div>
 
@@ -35,7 +34,6 @@
       </div>
 
       <div class="header-right">
-        <button class="btn-teal" data-feature="logout">로그아웃</button>
         <div class="icon-group">
         <span style="position:relative">
           <button class="icon-btn" id="btnLock" data-feature="lock" aria-label="화면 잠금">
@@ -178,11 +176,57 @@
           <canvas class="hot iso-canvas" id="isoCanvas" width="520" height="400"></canvas>
           <button type="button" class="hot hit eraser iso-er" id="isoEraser" title="지우개"></button>
           <input class="hot reason" id="reasonInput" type="text" placeholder="">
+          <span class="hot reason-ico" id="reasonModeIco" aria-hidden="true">
+            <svg viewBox="0 0 32 32">
+              <rect x="1.5" y="1.5" width="29" height="29" rx="7" fill="#5c5c5c"/>
+              <path d="M9 6.2v5.6M6.2 9h5.6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M20.2 9h5.6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M6.6 21.2l5 5M11.6 21.2l-5 5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="23" cy="20.2" r="1.15" fill="#fff"/>
+              <path d="M20.2 23h5.6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="23" cy="25.8" r="1.15" fill="#fff"/>
+            </svg>
+          </span>
           <div class="hot example-answer" id="reasonExample">
             <span class="ex-badge">예</span>
             <p>보이는 모서리는 실선으로, 보이지 않는 모서리는 점선으로 나타내어야 하는데 모든 모서리를 실선으로 나타내었습니다.</p>
           </div>
-          <button type="button" class="hot hit kb" id="kbHintBtn" title="키보드" aria-expanded="false" aria-controls="kbHintTag"></button>
+          <button type="button" class="hot hit kb" id="kbHintBtn" title="키보드" aria-pressed="false" aria-expanded="false" aria-controls="kbHintTag">
+            <span class="kb-knob" aria-hidden="true">
+              <svg class="kb-ico kb-ico-key" viewBox="0 0 24 24">
+                <defs>
+                  <linearGradient id="kbKeyGrad" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#3d7eff"/>
+                    <stop offset="1" stop-color="#2ec4b6"/>
+                  </linearGradient>
+                </defs>
+                <rect x="3.2" y="5.2" width="17.6" height="13.6" rx="3.2" fill="url(#kbKeyGrad)"/>
+                <circle cx="7.1" cy="9.4" r="1.05" fill="#fff"/>
+                <circle cx="10.4" cy="9.4" r="1.05" fill="#fff"/>
+                <circle cx="13.7" cy="9.4" r="1.05" fill="#fff"/>
+                <circle cx="17" cy="9.4" r="1.05" fill="#fff"/>
+                <circle cx="7.1" cy="12.6" r="1.05" fill="#fff"/>
+                <circle cx="10.4" cy="12.6" r="1.05" fill="#fff"/>
+                <circle cx="13.7" cy="12.6" r="1.05" fill="#fff"/>
+                <circle cx="17" cy="12.6" r="1.05" fill="#fff"/>
+                <rect x="8.2" y="15.35" width="7.6" height="1.55" rx="0.8" fill="#fff"/>
+              </svg>
+              <svg class="kb-ico kb-ico-math" viewBox="0 0 24 24">
+                <defs>
+                  <linearGradient id="kbMathGrad" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#3d7eff"/>
+                    <stop offset="1" stop-color="#2ec4b6"/>
+                  </linearGradient>
+                </defs>
+                <path d="M7.2 4.6v5.2M4.6 7.2h5.2" fill="none" stroke="url(#kbMathGrad)" stroke-width="1.7" stroke-linecap="round"/>
+                <path d="M14.2 7.2h5.2" fill="none" stroke="url(#kbMathGrad)" stroke-width="1.7" stroke-linecap="round"/>
+                <path d="M5.2 15.2l4 4M9.2 15.2l-4 4" fill="none" stroke="url(#kbMathGrad)" stroke-width="1.7" stroke-linecap="round"/>
+                <circle cx="16.8" cy="14.35" r="1.05" fill="#3d7eff"/>
+                <path d="M14.2 16.8h5.2" fill="none" stroke="url(#kbMathGrad)" stroke-width="1.7" stroke-linecap="round"/>
+                <circle cx="16.8" cy="19.25" r="1.05" fill="#2ec4b6"/>
+              </svg>
+            </span>
+          </button>
           <div class="hot kb-tag" id="kbHintTag" role="tooltip">실제 수업에서는 숫자/연산 기호 등을<br>손 글씨로 작성할 수 있습니다.</div>
           <button type="button" class="hot hit reset r7" data-reset="7" title="초기화"></button>
           <button type="button" class="hot hit example e7" id="reasonExampleBtn" data-example="7" title="예시" aria-pressed="false" aria-describedby="exHintTag">
@@ -221,16 +265,23 @@
         </div></div>
       </section>
       </div>
-            <div class="lock-overlay" id="lockOverlay">
-        <div class="lock-card">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#fff" stroke-width="1.8"/></svg>
-          학생 화면이 잠겨 있습니다
-        </div>
-      </div>
-      <div class="share-banner" id="shareBanner">교사 화면을 학생에게 보여주고 있습니다</div>
-      <canvas class="anno-overlay" id="annoCanvas"></canvas>
+      <div class="share-banner" id="shareBanner">학생 화면을 가렸습니다.</div>
+      <canvas class="anno-overlay" id="annoCanvas" aria-label="판서 화면"></canvas>
       <div class="anno-texts" id="annoTexts"></div>
-      <div class="anno-bar" id="annoBar">
+      <div class="anno-dock" id="annoDock">
+        <div class="anno-colors" id="annoColors" role="listbox" aria-label="펜 색상">
+          <button type="button" class="anno-swatch" data-color="#ee5729" aria-label="주황"></button>
+          <button type="button" class="anno-swatch" data-color="#e91e8c" aria-label="분홍"></button>
+          <button type="button" class="anno-swatch" data-color="#ff9800" aria-label="오렌지"></button>
+          <button type="button" class="anno-swatch" data-color="#f5d000" aria-label="노랑"></button>
+          <button type="button" class="anno-swatch" data-color="#26a69a" aria-label="청록"></button>
+          <button type="button" class="anno-swatch" data-color="#26c6da" aria-label="하늘"></button>
+          <button type="button" class="anno-swatch" data-color="#3d7eff" aria-label="파랑"></button>
+          <button type="button" class="anno-swatch" data-color="#7e57c2" aria-label="보라"></button>
+          <button type="button" class="anno-swatch" data-color="#9e9e9e" aria-label="회색"></button>
+          <button type="button" class="anno-swatch on" data-color="#222222" aria-label="검정"></button>
+        </div>
+        <div class="anno-bar" id="annoBar">
         <button type="button" class="anno-tool" data-anno="text" title="텍스트">
           <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h9M8.5 6v14M15 10h6M18 10v10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         </button>
@@ -243,8 +294,8 @@
         <button type="button" class="anno-tool" data-anno="eraser" title="지우개">
           <svg viewBox="0 0 24 24" fill="none"><path d="M15 5l6 6-8 8H7l-4-4 8-8 4-2z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M7 21h4M18.5 4.5l.8-1.6M20.8 6.2l1.6-.6M21 8.8l1.5.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         </button>
-        <button type="button" class="anno-tool size" data-anno="size" title="굵기" id="annoSize">
-          <span class="anno-dot"></span>
+        <button type="button" class="anno-tool color" data-anno="color" title="색상" id="annoColorBtn" aria-expanded="false">
+          <span class="anno-dot" id="annoColorDot"></span>
         </button>
         <span class="anno-sep"></span>
         <button type="button" class="anno-tool" data-anno="undo" title="실행 취소">
@@ -256,6 +307,7 @@
         <button type="button" class="anno-tool" data-anno="clear" title="모두 지우기">
           <svg viewBox="0 0 24 24" fill="none"><path d="M5 7h14M9 7V5h6v2M7 7l1 13h8l1-13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
+        </div>
       </div>
     </main>
 
@@ -283,7 +335,6 @@
         </button>
         <div class="pager-now" id="pageNow">1</div>
         <span class="pager-total">/ 8</span>
-        <span class="demo-pager">데모</span>
         <button class="pager-btn" id="nextPage" aria-label="다음 쪽">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9.5 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -836,6 +887,10 @@
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="js/app.js?v=png49"></script>
+  <div class="result-pop" id="resultPop" role="status" aria-live="polite">
+    <p class="result-pop-note">실제 수업 화면과 다를 수 있습니다</p>
+    <p class="result-pop-msg" id="resultPopMsg"></p>
+  </div>
+  <script src="js/app.js?v=png63"></script>
 </body>
 </html>
