@@ -57,6 +57,17 @@
     toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1800);
   }
 
+  const resultPop = $("#resultPop");
+  const resultPopMsg = $("#resultPopMsg");
+  let resultTimer;
+  function showResult(msg) {
+    if (!resultPop) return;
+    if (resultPopMsg) resultPopMsg.textContent = msg;
+    resultPop.classList.add("show");
+    clearTimeout(resultTimer);
+    resultTimer = setTimeout(() => resultPop.classList.remove("show"), 1800);
+  }
+
   const backdrop = $("#backdrop");
   const panels = {
     toc: $("#panelToc"),
@@ -318,7 +329,6 @@
   function toggleLock() {
     state.locked = !state.locked;
     $("#btnLock").classList.toggle("active", state.locked);
-    $("#lockOverlay")?.classList.toggle("on", state.locked);
     toast(state.locked
       ? "학생이 화면을 넘길 수 없도록 잠금 처리되었습니다."
       : "화면 잠금이 해제되었습니다.");
@@ -327,15 +337,24 @@
     state.sharing = !state.sharing;
     $("#btnShare").classList.toggle("active", state.sharing);
     $("#shareBanner").classList.toggle("on", state.sharing);
-    toast(state.sharing ? "교사 화면을 학생에게 보여주고 있습니다." : "화면 공유를 종료했습니다.");
   }
   function toggleAnno() {
     state.annotating = !state.annotating;
     $("#btnAnno").classList.toggle("active", state.annotating);
     $("#annoCanvas").classList.toggle("drawing", state.annotating);
+    $("#annoDock")?.classList.toggle("show", state.annotating);
     $("#annoBar").classList.toggle("show", state.annotating);
-    $("#annoTexts").style.pointerEvents = state.annotating ? "auto" : "none";
-    if (state.annotating) resizeAnno();
+    document.body.classList.toggle("is-annotating", state.annotating);
+    if (state.annotating) {
+      setAnnoTool("pen");
+      requestAnimationFrame(() => {
+        resizeAnno();
+        annoApply();
+      });
+    } else {
+      hideAnnoColors();
+      clearAnnoDrawings();
+    }
   }
 
   /* Students */
@@ -558,25 +577,46 @@
   const annoCtx = annoCanvas.getContext("2d");
   const annoState = {
     tool: "pen",
-    sizes: [3, 6, 12],
+    color: "#222222",
+    sizes: [4, 8, 16],
     sizeIdx: 1,
     drawing: false,
+    pointerId: null,
     last: null,
     undo: [],
     redo: []
   };
+  function annoIgnoreTarget(target) {
+    return !!target?.closest?.(".anno-dock, .anno-bar, .anno-note, .header, .footer, .modal, .backdrop, .toast, .result-pop, .toolkit-tip");
+  }
   function annoPos(e) {
     const r = annoCanvas.getBoundingClientRect();
-    return { x: (e.clientX - r.left) * (annoCanvas.width / r.width), y: (e.clientY - r.top) * (annoCanvas.height / r.height) };
+    if (!r.width || !r.height) return { x: 0, y: 0 };
+    return {
+      x: (e.clientX - r.left) * (annoCanvas.width / r.width),
+      y: (e.clientY - r.top) * (annoCanvas.height / r.height)
+    };
   }
   function resizeAnno() {
     const r = annoCanvas.getBoundingClientRect();
-    if (!r.width) return;
+    if (!r.width || !r.height) return;
     let prev = null;
     try { prev = annoCtx.getImageData(0, 0, annoCanvas.width || 1, annoCanvas.height || 1); } catch (_) {}
-    annoCanvas.width = Math.max(1, Math.floor(r.width));
-    annoCanvas.height = Math.max(1, Math.floor(r.height));
+    const w = Math.max(1, Math.floor(r.width));
+    const h = Math.max(1, Math.floor(r.height));
+    if (annoCanvas.width === w && annoCanvas.height === h) return;
+    annoCanvas.width = w;
+    annoCanvas.height = h;
     if (prev) { try { annoCtx.putImageData(prev, 0, 0); } catch (_) {} }
+  }
+  function clearAnnoDrawings() {
+    annoState.drawing = false;
+    annoState.pointerId = null;
+    annoState.undo.length = 0;
+    annoState.redo.length = 0;
+    try { annoCtx.clearRect(0, 0, annoCanvas.width, annoCanvas.height); } catch (_) {}
+    const notes = $("#annoTexts");
+    if (notes) notes.innerHTML = "";
   }
   function annoSnap() {
     try {
@@ -585,8 +625,28 @@
       annoState.redo.length = 0;
     } catch (_) {}
   }
+  function hexToRgba(hex, a) {
+    const n = (hex || "#222222").replace("#", "");
+    const r = parseInt(n.slice(0, 2), 16);
+    const g = parseInt(n.slice(2, 4), 16);
+    const b = parseInt(n.slice(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
+  }
+  function setAnnoColor(color) {
+    annoState.color = color;
+    const dot = $("#annoColorDot");
+    if (dot) dot.style.background = color;
+    $$(".anno-swatch").forEach((b) => b.classList.toggle("on", b.dataset.color === color));
+    annoApply();
+  }
+  function hideAnnoColors() {
+    $("#annoDock")?.classList.remove("show-colors");
+    $("#annoColorBtn")?.classList.remove("on");
+    $("#annoColorBtn")?.setAttribute("aria-expanded", "false");
+  }
   function annoApply() {
     const s = annoState.sizes[annoState.sizeIdx];
+    const color = annoState.color || "#222222";
     annoCtx.lineCap = "round";
     annoCtx.lineJoin = "round";
     annoCtx.globalAlpha = 1;
@@ -596,28 +656,30 @@
       annoCtx.lineWidth = s * 5;
     } else if (annoState.tool === "highlighter") {
       annoCtx.globalCompositeOperation = "source-over";
-      annoCtx.strokeStyle = "rgba(255, 214, 0, 0.38)";
+      annoCtx.strokeStyle = hexToRgba(color, 0.38);
       annoCtx.lineWidth = s * 5;
     } else {
       annoCtx.globalCompositeOperation = "source-over";
-      annoCtx.strokeStyle = "#ee5729";
+      annoCtx.strokeStyle = color;
       annoCtx.lineWidth = s;
     }
   }
   function setAnnoTool(tool) {
-    if (["undo", "redo", "clear", "size"].includes(tool)) return;
+    if (["undo", "redo", "clear", "color"].includes(tool)) return;
     annoState.tool = tool;
     $$(".anno-tool[data-anno]").forEach((b) => {
-      if (["undo", "redo", "clear", "size"].includes(b.dataset.anno)) return;
+      if (["undo", "redo", "clear", "color"].includes(b.dataset.anno)) return;
       b.classList.toggle("on", b.dataset.anno === tool);
     });
     annoCanvas.classList.toggle("tool-eraser", tool === "eraser");
     annoCanvas.classList.toggle("tool-text", tool === "text");
   }
   window.addEventListener("resize", resizeAnno);
-  annoCanvas.addEventListener("pointerdown", (e) => {
+  function onAnnoPointerDown(e) {
     if (!state.annotating) return;
-    if (e.target.closest?.(".anno-bar")) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    if (annoIgnoreTarget(e.target)) return;
+    e.preventDefault();
     if (annoState.tool === "text") {
       const r = annoCanvas.getBoundingClientRect();
       const note = document.createElement("div");
@@ -631,25 +693,44 @@
       document.execCommand("selectAll", false, null);
       return;
     }
+    resizeAnno();
     annoSnap();
     annoState.drawing = true;
-    annoState.last = annoPos(e);
+    annoState.pointerId = e.pointerId;
+    const p = annoPos(e);
+    annoState.last = p;
     annoApply();
     annoCtx.beginPath();
-    annoCtx.moveTo(annoState.last.x, annoState.last.y);
-    annoCanvas.setPointerCapture?.(e.pointerId);
-  });
-  annoCanvas.addEventListener("pointermove", (e) => {
-    if (!annoState.drawing) return;
-    const p = annoPos(e);
-    annoCtx.lineTo(p.x, p.y);
-    annoCtx.stroke();
+    annoCtx.arc(p.x, p.y, Math.max(0.5, annoCtx.lineWidth / 2), 0, Math.PI * 2);
+    annoCtx.fillStyle = annoCtx.strokeStyle;
+    annoCtx.fill();
     annoCtx.beginPath();
     annoCtx.moveTo(p.x, p.y);
-  });
-  function endAnnoDraw() { annoState.drawing = false; }
-  window.addEventListener("pointerup", endAnnoDraw);
-  window.addEventListener("pointercancel", endAnnoDraw);
+    try { annoCanvas.setPointerCapture?.(e.pointerId); } catch (_) {}
+  }
+  function onAnnoPointerMove(e) {
+    if (!annoState.drawing) return;
+    if (annoState.pointerId != null && e.pointerId !== annoState.pointerId) return;
+    e.preventDefault();
+    const extra = typeof e.getCoalescedEvents === "function" ? e.getCoalescedEvents() : null;
+    const pts = extra && extra.length ? extra : [e];
+    for (const ev of pts) {
+      const p = annoPos(ev);
+      annoCtx.lineTo(p.x, p.y);
+      annoCtx.stroke();
+      annoCtx.beginPath();
+      annoCtx.moveTo(p.x, p.y);
+    }
+  }
+  function endAnnoDraw(e) {
+    if (e && annoState.pointerId != null && e.pointerId !== annoState.pointerId) return;
+    annoState.drawing = false;
+    annoState.pointerId = null;
+  }
+  document.addEventListener("pointerdown", onAnnoPointerDown);
+  document.addEventListener("pointermove", onAnnoPointerMove);
+  document.addEventListener("pointerup", endAnnoDraw);
+  document.addEventListener("pointercancel", endAnnoDraw);
 
   $("#annoBar").addEventListener("click", (e) => {
     const btn = e.target.closest("[data-anno]");
@@ -677,14 +758,25 @@
       $("#annoTexts").innerHTML = "";
       return;
     }
-    if (t === "size") {
-      annoState.sizeIdx = (annoState.sizeIdx + 1) % annoState.sizes.length;
-      btn.dataset.s = String(annoState.sizeIdx);
+    if (t === "color") {
+      const dock = $("#annoDock");
+      const open = !dock?.classList.contains("show-colors");
+      dock?.classList.toggle("show-colors", open);
+      $("#annoColorBtn")?.classList.toggle("on", open);
+      $("#annoColorBtn")?.setAttribute("aria-expanded", String(open));
       return;
     }
+    hideAnnoColors();
     setAnnoTool(t);
   });
-  $("#annoSize").dataset.s = "1";
+  $$(".anno-swatch").forEach((btn) => {
+    btn.style.setProperty("--swatch", btn.dataset.color);
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setAnnoColor(btn.dataset.color);
+    });
+  });
+  setAnnoColor("#222222");
   const anno = { resize: resizeAnno };
 
   /* AI drawing on SVG */
@@ -888,7 +980,8 @@
     people: new Set(),
     reflect: { 1: "good", 2: "bad", 3: "ok", 4: "good" },
     netErase: false,
-    isoErase: false
+    isoErase: false,
+    kbMath: false
   };
 
   function clearZone(zone) {
@@ -1247,16 +1340,24 @@
     lesson.isoErase = !lesson.isoErase;
     $("#isoEraser").classList.toggle("on", lesson.isoErase);
   });
+  function setKbTooltip(on) {
+    $("#kbHintTag")?.classList.toggle("show", on);
+    $("#kbHintBtn")?.setAttribute("aria-expanded", on ? "true" : "false");
+  }
+  function setKbMode(on) {
+    lesson.kbMath = on;
+    $("#kbHintBtn")?.classList.toggle("on", on);
+    $("#kbHintBtn")?.setAttribute("aria-pressed", String(on));
+    $("#reasonModeIco")?.classList.toggle("show", on);
+    $("#exHintTag")?.classList.toggle("is-hidden", on);
+    setKbTooltip(on);
+  }
   function hideKbHint() {
-    $("#kbHintTag")?.classList.remove("show");
-    $("#kbHintBtn")?.setAttribute("aria-expanded", "false");
+    setKbTooltip(false);
   }
   $("#kbHintBtn")?.addEventListener("click", (e) => {
     e.stopPropagation();
-    const tag = $("#kbHintTag");
-    if (!tag) return;
-    const on = tag.classList.toggle("show");
-    $("#kbHintBtn").setAttribute("aria-expanded", on ? "true" : "false");
+    setKbMode(!lesson.kbMath);
   });
   document.addEventListener("click", (e) => {
     if (!e.target.closest("#kbHintBtn") && !e.target.closest("#kbHintTag")) hideKbHint();
@@ -1398,7 +1499,6 @@
       $("#netExampleBtn")?.classList.remove("is-close");
       $("#netExampleBtn")?.setAttribute("aria-pressed", "false");
       $("#netExampleBtn")?.setAttribute("title", "예시");
-      $("#netHintTag")?.classList.remove("show");
       $("#netSampleLabel")?.classList.remove("show");
     }
     if (n === 6) {
@@ -1414,7 +1514,7 @@
       $("#reasonExampleBtn")?.classList.remove("is-close");
       $("#reasonExampleBtn")?.setAttribute("aria-pressed", "false");
       $("#reasonExampleBtn")?.setAttribute("title", "예시");
-      hideKbHint();
+      setKbMode(false);
     }
     if (n === 8) restoreChicks();
   }
@@ -1426,7 +1526,6 @@
     if (reset) {
       const n = Number(reset.dataset.reset);
       resetSlide(n, n === 4);
-      toast("입력을 지웠습니다.");
     }
     if (check) {
       const n = Number(check.dataset.check);
@@ -1446,19 +1545,17 @@
       if (n === 6) {
         ok = lesson.people.has("주아") && lesson.people.has("은찬") && !lesson.people.has("윤호");
       }
-      toast(ok ? "정답입니다!" : "다시 생각해 보세요.");
+      showResult(ok ? "정답입니다!" : "다시 생각해 보세요.");
     }
     if (example) {
       const n = Number(example.dataset.example);
       if (n === 5) {
         const btn = $("#netExampleBtn") || example;
-        const tag = $("#netHintTag");
         const label = $("#netSampleLabel");
         const on = !btn?.classList.contains("is-close");
         btn?.classList.toggle("is-close", on);
         btn?.setAttribute("aria-pressed", on ? "true" : "false");
         btn?.setAttribute("title", on ? "예시 닫기" : "예시");
-        tag?.classList.toggle("show", on);
         label?.classList.toggle("show", on);
         if (on) {
           netBoard?.example([
