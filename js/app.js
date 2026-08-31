@@ -7,19 +7,23 @@
   ];
 
   const TOC = [
-    { page: 1, title: "이번 시간에 배울 내용" },
-    { page: 2, title: "다각형 만들기" },
-    { page: 3, title: "주어진 다각형을 만들어 보세요" },
-    { page: 4, title: "나만의 모양 만들기" },
-    { page: 5, title: "다음 시간에는" }
+    { page: 1, title: "이번 시간에 공부할 내용" },
+    { page: 2, title: "알맞은 말을 고르세요" },
+    { page: 3, title: "각 부분의 이름을 놓으세요" },
+    { page: 4, title: "평행한 면을 고르세요" },
+    { page: 5, title: "전개도를 그려 보세요" },
+    { page: 6, title: "옳게 말한 사람을 고르세요" },
+    { page: 7, title: "잘못 그린 부분을 찾아보세요" },
+    { page: 8, title: "해당하는 표정에 색칠하세요" }
   ];
+  const PAGE_COUNT = TOC.length;
   const LEVEL_META = {
     green: { label: "성취 상" },
     yellow: { label: "성취 중" },
     red: { label: "성취 하" }
   };
   (function assignLevels() {
-    const colors = ["green", "yellow", "red", "green", "yellow"];
+    const colors = ["green", "yellow", "red", "green", "yellow", "red", "green", "yellow"];
     for (let i = colors.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [colors[i], colors[j]] = [colors[j], colors[i]];
@@ -28,7 +32,7 @@
   })();
 
   const state = {
-    page: 3,
+    page: 1,
     zoom: 100,
     classSeconds: 11,
     locked: false,
@@ -67,15 +71,32 @@
     report: $("#panelReport"),
     end: $("#panelEnd"),
     logout: $("#panelLogout"),
-    back: $("#panelBack")
+    back: $("#panelBack"),
+    supplies: $("#panelSupplies")
   };
 
   function closeStudentZoom() {
     $("#studentZoom")?.classList.remove("show");
   }
 
+  function closeToolFrame() {
+    const frame = $("#toolFrame");
+    if (!frame?.classList.contains("show")) return;
+    frame.classList.remove("show");
+    const iframe = $("#toolFrameIframe");
+    if (iframe) iframe.src = "about:blank";
+  }
+  function openToolFrame(title, url) {
+    $("#toolFrameTitle").textContent = title;
+    const iframe = $("#toolFrameIframe");
+    iframe.title = title;
+    iframe.src = url;
+    $("#toolFrame").classList.add("show");
+  }
+
   function closeAll() {
     closeStudentZoom();
+    closeToolFrame();
     Object.values(panels).forEach((el) => el.classList.remove("show"));
     backdrop.classList.remove("show");
     document.body.classList.remove("ai-open");
@@ -87,6 +108,18 @@
     document.getElementById("drawCanvas")?.classList.remove("drawing");
   }
 
+  function setGameSwitch(on, silent) {
+    const sw = $("#gameSwitch");
+    if (!sw) return;
+    sw.classList.toggle("on", on);
+    $("#gameToggleWrap")?.classList.toggle("is-on", on);
+    sw.setAttribute("aria-pressed", String(on));
+    sw.setAttribute("aria-label", on ? "수학 게임 활성" : "수학 게임 비활성");
+    if (!silent) {
+      toast(on ? "학생에게 수학 게임이 활성화되었습니다." : "수학 게임을 비활성화했습니다.");
+    }
+  }
+
   function openPanel(key) {
     closeAll();
     const el = panels[key];
@@ -94,10 +127,32 @@
     el.classList.add("show");
     if (key !== "toc" && key !== "monitor") backdrop.classList.add("show");
     if (key === "monitor") document.querySelector('[data-feature="monitor"]')?.classList.add("active");
+    if (key === "game") setGameSwitch(false, true);
     const kitKeys = ["scoreboard", "seats", "sfx", "boardwrite", "toolkit"];
     const btn = document.querySelector(`.foot-btn[data-feature="${kitKeys.includes(key) ? "toolkit" : key}"]`);
     if (btn) btn.classList.add("on");
+    if (key === "toolkit") {
+      requestAnimationFrame(() => requestAnimationFrame(placeToolkitTip));
+    }
   }
+
+  function placeToolkitTip() {
+    const modal = panels.toolkit;
+    const tip = $("#toolkitTip");
+    if (!modal?.classList.contains("show") || !tip) return;
+    const badge = modal.querySelector(".toolkit-tile.new.seats .new-badge")
+      || modal.querySelector(".toolkit-tile.new .new-badge");
+    if (!badge) return;
+    const modalBox = modal.getBoundingClientRect();
+    const badgeBox = badge.getBoundingClientRect();
+    tip.style.left = `${Math.round(modalBox.right + 16)}px`;
+    const tipH = tip.offsetHeight || 96;
+    let top = Math.round(badgeBox.top + badgeBox.height / 2 - 28);
+    top = Math.max(12, Math.min(top, window.innerHeight - tipH - 12));
+    tip.style.top = `${top}px`;
+    tip.style.transform = "none";
+  }
+  window.addEventListener("resize", placeToolkitTip);
 
   const KIT_SUB = ["scoreboard", "seats", "sfx", "boardwrite"];
   function kitSubOpen() {
@@ -120,6 +175,10 @@
   });
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
+    if ($("#toolFrame")?.classList.contains("show")) {
+      closeToolFrame();
+      return;
+    }
     if ($("#studentZoom")?.classList.contains("show")) {
       closeStudentZoom();
       return;
@@ -149,17 +208,25 @@
     $$(".page").forEach((p) => p.classList.toggle("active", Number(p.dataset.page) === state.page));
     $("#pageNow").textContent = state.page;
     $("#prevPage").disabled = state.page <= 1;
-    $("#nextPage").disabled = state.page >= 5;
+    $("#nextPage").disabled = state.page >= PAGE_COUNT;
     renderToc();
   }
+  function goToPage(n) {
+    const next = Math.max(1, Math.min(PAGE_COUNT, Number(n)));
+    if (next === state.page) return;
+    const from = state.page;
+    state.page = next;
+    try { resetSlide(from); } catch (err) { console.warn(err); }
+    renderPage();
+  }
   $("#prevPage").addEventListener("click", () => {
-    if (state.page > 1) { state.page -= 1; renderPage(); }
+    if (state.page > 1) goToPage(state.page - 1);
   });
   $("#nextPage").addEventListener("click", () => {
-    if (state.page < 5) { state.page += 1; renderPage(); }
+    if (state.page < PAGE_COUNT) goToPage(state.page + 1);
   });
   document.getElementById("slide2Next")?.addEventListener("click", () => {
-    state.page = 3; renderPage();
+    goToPage(3);
   });
   document.getElementById("composeReset")?.addEventListener("click", () => {
     const ta = document.getElementById("composeText");
@@ -176,9 +243,12 @@
 
   function tocCard(page) {
     const item = TOC.find((t) => t.page === page);
-    const meta = LEVEL_META[item.level];
+    const showLevel = page !== 1 && page !== PAGE_COUNT;
+    const tag = showLevel && item.level
+      ? `<span class="toc-level ${item.level}" title="${LEVEL_META[item.level].label}"></span>`
+      : "";
     return `<div class="toc-row">
-      <span class="toc-level ${item.level}" title="${meta.label}"></span>
+      ${tag}
       <button class="toc-card ${page === state.page ? "current" : ""}" data-go="${page}">
         ${tocThumb(page)}
         <span class="toc-caption">${item.title}</span>
@@ -189,8 +259,8 @@
   function renderToc() {
     const sections = [
       { name: "들어가기", pages: [1] },
-      { name: "학습하기", pages: [2, 3, 4] },
-      { name: "정리하기", pages: [5] }
+      { name: "학습하기", pages: [2, 3, 4, 5, 6] },
+      { name: "정리하기", pages: [7, 8] }
     ];
     $("#tocList").innerHTML = sections.map((sec) => `
       <section class="toc-section">
@@ -202,14 +272,14 @@
   $("#tocList").addEventListener("click", (e) => {
     const btn = e.target.closest("[data-go]");
     if (!btn) return;
-    state.page = Number(btn.dataset.go);
-    renderPage();
+    goToPage(Number(btn.dataset.go));
   });
 
   /* Zoom */
   function applyZoom() {
     $("#zoomValue").textContent = `${state.zoom} %`;
-    $("#board").style.transform = `scale(${state.zoom / 100})`;
+    const stage = $("#slideZoom");
+    if (stage) stage.style.transform = `scale(${state.zoom / 100})`;
   }
   $("#zoomIn").addEventListener("click", () => {
     state.zoom = Math.min(150, state.zoom + 10);
@@ -248,6 +318,7 @@
   function toggleLock() {
     state.locked = !state.locked;
     $("#btnLock").classList.toggle("active", state.locked);
+    $("#lockOverlay")?.classList.toggle("on", state.locked);
     toast(state.locked
       ? "학생이 화면을 넘길 수 없도록 잠금 처리되었습니다."
       : "화면 잠금이 해제되었습니다.");
@@ -271,26 +342,21 @@
   const MONITOR_STUDENTS = [
     { name: "김민준", wait: false, help: false, slide: 5 },
     { name: "이서연", wait: false, help: false, slide: 3 },
-    { name: "최하은", wait: false, help: true, slide: 4 },
+    { name: "최하은", wait: false, help: true, slide: 7, handNote: "가려진 모서리는 점선으로 그려야 해요." },
     { name: "박도윤", wait: true, help: false },
     { name: "정시우", wait: true, help: false }
   ];
-  const HAEUN_TEXT = "등대 모양을 만드는 데 사다리꼴, 정사각형, 삼각형을 사용했습니다.";
   const WAIT_MARK = `<div class="wait-mark">
     <svg viewBox="0 0 24 24" fill="none"><path d="M6 4h12M6 20h12M8 4l3.5 7.5L8 20M16 4l-3.5 7.5L16 20" stroke="#b0b0b0" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span>수업 입장 전</span>
   </div>`;
   const SPK = `<span class="spk" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 10v4h3l4 3V7L7 10H4zM16 9a4 4 0 010 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`;
 
-  function composeNote(s) {
-    if (s.name !== "최하은") return "";
-    return `<p class="slide-compose-note">${HAEUN_TEXT}</p>`;
-  }
-
   function slideMarkup(s) {
+    const note = s.handNote ? `<p class="hand-note">${s.handNote}</p>` : "";
     return `<div class="mini-slide-wrap">
       <img class="mini-slide" src="slides/slide${s.slide}.png" alt="${s.slide}번 슬라이드">
-      ${composeNote(s)}
+      ${note}
     </div>`;
   }
 
@@ -313,9 +379,10 @@
       return;
     }
     $("#zoomStudentName").textContent = `${s.name} · ${s.slide}쪽`;
+    const note = s.handNote ? `<p class="hand-note">${s.handNote}</p>` : "";
     $("#zoomSlideFit").innerHTML = `
       <img src="slides/slide${s.slide}.png" alt="${s.slide}번 슬라이드">
-      ${composeNote(s)}`;
+      ${note}`;
     $("#studentZoom").classList.add("show");
   }
 
@@ -440,10 +507,7 @@
     $("#gameUnit")?.setAttribute("aria-expanded", "false");
   }
   $("#gameSwitch")?.addEventListener("click", () => {
-    const on = $("#gameSwitch").classList.toggle("on");
-    $("#gameToggleWrap")?.classList.toggle("is-on", on);
-    $("#gameSwitch").setAttribute("aria-pressed", String(on));
-    toast(on ? "학생에게 수학 게임이 활성화되었습니다." : "수학 게임을 비활성화했습니다.");
+    setGameSwitch(!$("#gameSwitch").classList.contains("on"));
   });
   $("#gameUnit")?.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -462,6 +526,12 @@
   });
   document.addEventListener("click", closeGameMenu);
   $$("[data-game]").forEach((b) => b.addEventListener("click", () => {
+    const href = b.dataset.href;
+    if (href) {
+      closeAll();
+      openToolFrame(b.dataset.game, href);
+      return;
+    }
     toast(`${b.dataset.game}을 실행합니다. (데모)`);
   }));
 
@@ -477,6 +547,10 @@
   $("#logoutConfirm").addEventListener("click", () => {
     closeAll();
     toast("로그아웃되었습니다. 수업 상태는 저장되어 있습니다.");
+  });
+  $("#backLeave")?.addEventListener("click", () => {
+    closeAll();
+    toast("수업을 종료하고 나갑니다. (데모)");
   });
 
   /* Annotation canvas */
@@ -617,6 +691,7 @@
   const svg = $("#shapeSvg");
   const drawPts = [];
   let extraId = 0;
+  if (svg) {
 
   function svgPoint(e) {
     const pt = svg.createSVGPoint();
@@ -770,27 +845,645 @@
     clearPreview();
     toast("내가 그린 도형을 지웠습니다.");
   });
+  }
+
   $$("[data-math-tool]").forEach((b) => b.addEventListener("click", () => {
+    const url = b.dataset.mathUrl;
+    if (url) {
+      openToolFrame(b.dataset.mathTool, url);
+      return;
+    }
     toast(`${b.dataset.mathTool}를 열었습니다. (데모)`);
   }));
+  $("#toolFrameClose")?.addEventListener("click", closeToolFrame);
   $("#aiPopout")?.addEventListener("click", () => toast("새 창에서 수학교구를 열었습니다. (데모)"));
   $("#aiMaximize")?.addEventListener("click", () => toast("수학교구 창을 크게 펼쳤습니다. (데모)"));
 
-  /* Guide */
-  $("#hideGuide").addEventListener("click", () => $("#guide").classList.add("hidden"));
-  $("#toggleHotspots").addEventListener("click", () => {
-    document.body.classList.toggle("show-hotspots");
-    $("#toggleHotspots").textContent = document.body.classList.contains("show-hotspots") ? "번호 숨기기" : "번호 표시";
+  /* Lesson slide interactions */
+  $$(".sel-wrap").forEach((wrap) => {
+    const btn = wrap.querySelector(".sel-btn");
+    const list = wrap.querySelector(".sel-list");
+    btn?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const willOpen = !wrap.classList.contains("open");
+      $$(".sel-wrap").forEach((w) => w.classList.remove("open"));
+      wrap.classList.toggle("open", willOpen);
+    });
+    list?.addEventListener("click", (e) => {
+      const item = e.target.closest("[data-value]");
+      if (!item) return;
+      wrap.dataset.value = item.dataset.value;
+      if (btn) btn.textContent = item.dataset.value;
+      $$("li", list).forEach((li) => li.setAttribute("aria-selected", li === item ? "true" : "false"));
+      wrap.classList.remove("open");
+    });
+  });
+  document.addEventListener("click", () => {
+    $$(".sel-wrap").forEach((w) => w.classList.remove("open"));
   });
 
-  /* Shape hover names on main board */
-  svg.addEventListener("pointermove", (e) => {
-    const poly = e.target.closest(".poly");
-    svg.style.cursor = poly ? "pointer" : (panels.ai.classList.contains("show") ? "crosshair" : "default");
+  const lesson = {
+    q3step: 0,
+    pickedFaces: new Set(),
+    people: new Set(),
+    reflect: { 1: "good", 2: "bad", 3: "ok", 4: "good" },
+    netErase: false,
+    isoErase: false
+  };
+
+  function clearZone(zone) {
+    const label = zone.dataset.placed;
+    if (label) $("#labelBank")?.querySelector(`.drag-chip[data-label="${label}"]`)?.classList.remove("used");
+    zone.textContent = "";
+    delete zone.dataset.placed;
+    zone.classList.remove("filled", "on");
+    zone.removeAttribute("draggable");
+  }
+
+  function returnChips() {
+    $$(".drop-zone").forEach(clearZone);
+    $$("#labelBank .drag-chip").forEach((c) => c.classList.remove("used"));
+  }
+
+  function placeChip(zone, label) {
+    const bank = $("#labelBank");
+    const orig = bank?.querySelector(`.drag-chip[data-label="${label}"]`);
+    if (!orig) return;
+    if (zone.dataset.placed === label) return;
+    if (zone.dataset.placed) clearZone(zone);
+    $$(".drop-zone").forEach((z) => {
+      if (z !== zone && z.dataset.placed === label) clearZone(z);
+    });
+    orig.classList.add("used");
+    zone.dataset.placed = label;
+    zone.textContent = label;
+    zone.classList.add("filled");
+    zone.setAttribute("draggable", "true");
+  }
+
+  document.addEventListener("dragstart", (e) => {
+    const chip = e.target.closest(".drag-chip");
+    const zone = e.target.closest(".drop-zone");
+    if (chip) {
+      if (chip.classList.contains("used")) {
+        e.preventDefault();
+        return;
+      }
+      e.dataTransfer.setData("text/plain", chip.dataset.label);
+      return;
+    }
+    if (zone?.dataset.placed) e.dataTransfer.setData("text/plain", zone.dataset.placed);
   });
-  svg.addEventListener("dblclick", (e) => {
-    const poly = e.target.closest(".poly");
-    if (poly) toast(`${poly.dataset.name}`);
+  $$(".drop-zone").forEach((zone) => {
+    zone.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("on"); });
+    zone.addEventListener("dragleave", () => zone.classList.remove("on"));
+    zone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      zone.classList.remove("on");
+      const label = e.dataTransfer.getData("text/plain");
+      if (label) placeChip(zone, label);
+    });
+  });
+
+  $$("#faceSvg .face-poly").forEach((poly) => {
+    poly.addEventListener("click", () => {
+      const id = poly.dataset.face;
+      if (lesson.q3step === 0) {
+        $$("#faceSvg .face-poly").forEach((p) => p.classList.remove("picked"));
+        lesson.pickedFaces = new Set([id]);
+        poly.classList.add("picked");
+      } else {
+        poly.classList.toggle("picked");
+        if (poly.classList.contains("picked")) lesson.pickedFaces.add(id);
+        else lesson.pickedFaces.delete(id);
+      }
+    });
+  });
+  function setQ3Step(step) {
+    lesson.q3step = step;
+    $("#q3fit")?.classList.toggle("q3-step1", step === 1);
+    $$("#faceSvg .face-poly").forEach((p) => p.classList.remove("picked"));
+    $$("#q3fit .face-name").forEach((p) => p.classList.remove("picked"));
+    lesson.pickedFaces.clear();
+  }
+  $("#q3next")?.addEventListener("click", () => setQ3Step(1));
+  $("#q3prev")?.addEventListener("click", () => setQ3Step(0));
+  $$("#q3fit .face-name").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      btn.classList.toggle("picked");
+      const id = btn.dataset.face;
+      if (btn.classList.contains("picked")) lesson.pickedFaces.add(id);
+      else lesson.pickedFaces.delete(id);
+    });
+  });
+
+  $$(".talk-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      card.classList.toggle("on");
+      const name = card.dataset.person;
+      if (card.classList.contains("on")) lesson.people.add(name);
+      else lesson.people.delete(name);
+    });
+  });
+
+  function netLineBoard(canvas) {
+    const ctx = canvas.getContext("2d");
+    const COLS = 21;
+    const ROWS = 15;
+    const bar = $("#netStyleBar");
+    const fit = canvas.closest(".slide-fit");
+    const segments = [];
+    const verts = new Set();
+    let active = null;
+    let lineMode = "solid";
+    let lastSeg = null;
+
+    function metrics() {
+      const ox = canvas.width * 0.316;
+      const oy = canvas.height * 0.012;
+      const cellW = canvas.width * 0.03255;
+      const cellH = canvas.height * 0.0661;
+      return { ox, oy, cellW, cellH };
+    }
+    function pt(c, r) {
+      const { ox, oy, cellW, cellH } = metrics();
+      return { x: ox + c * cellW, y: oy + r * cellH };
+    }
+    function key(c, r) { return `${c},${r}`; }
+    function sameEdge(a, b) {
+      return (a.c === b.c && a.r === b.r);
+    }
+    function segKey(a, b) {
+      const k1 = key(a.c, a.r);
+      const k2 = key(b.c, b.r);
+      return k1 < k2 ? `${k1}|${k2}` : `${k2}|${k1}`;
+    }
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = "#111";
+      ctx.fillStyle = "#111";
+      segments.forEach((s) => {
+        const a = pt(s.a.c, s.a.r);
+        const b = pt(s.b.c, s.b.r);
+        ctx.setLineDash(s.dashed ? [7, 6] : []);
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
+      verts.forEach((k) => {
+        const [c, r] = k.split(",").map(Number);
+        const p = pt(c, r);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3.6, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      if (active) {
+        const p = pt(active.c, active.r);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 5.2, 0, Math.PI * 2);
+        ctx.fillStyle = "#3d7eff";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3.2, 0, Math.PI * 2);
+        ctx.fillStyle = "#111";
+        ctx.fill();
+      }
+    }
+    function placeBar() {
+      if (!active || !bar || !fit) {
+        bar?.classList.remove("show");
+        return;
+      }
+      const p = pt(active.c, active.r);
+      const cr = canvas.getBoundingClientRect();
+      const fr = fit.getBoundingClientRect();
+      const sx = cr.left + (p.x / canvas.width) * cr.width;
+      const sy = cr.top + (p.y / canvas.height) * cr.height;
+      bar.style.left = `${((sx - fr.left) / fr.width) * 100}%`;
+      bar.style.top = `${((sy - fr.top) / fr.height) * 100}%`;
+      bar.classList.add("show");
+      $$(".net-style-btn", bar).forEach((b) => b.classList.toggle("on", b.dataset.style === lineMode));
+    }
+    function snap(e) {
+      const r = canvas.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width * canvas.width;
+      const y = (e.clientY - r.top) / r.height * canvas.height;
+      const { ox, oy, cellW, cellH } = metrics();
+      const c = Math.round((x - ox) / cellW);
+      const row = Math.round((y - oy) / cellH);
+      if (c < 0 || row < 0 || c > COLS || row > ROWS) return null;
+      const p = pt(c, row);
+      if (Math.hypot(x - p.x, y - p.y) > Math.min(cellW, cellH) * 0.45) return null;
+      return { c, r: row };
+    }
+    function distToSeg(x, y, s) {
+      const a = pt(s.a.c, s.a.r);
+      const b = pt(s.b.c, s.b.r);
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const len2 = dx * dx + dy * dy || 1;
+      let t = ((x - a.x) * dx + (y - a.y) * dy) / len2;
+      t = Math.max(0, Math.min(1, t));
+      return Math.hypot(x - (a.x + t * dx), y - (a.y + t * dy));
+    }
+    function nearestSeg(e) {
+      const r = canvas.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width * canvas.width;
+      const y = (e.clientY - r.top) / r.height * canvas.height;
+      let best = -1;
+      let bestD = 14;
+      segments.forEach((s, i) => {
+        const d = distToSeg(x, y, s);
+        if (d < bestD) { bestD = d; best = i; }
+      });
+      return best;
+    }
+    function addSeg(a, b, dashed) {
+      const k = segKey(a, b);
+      const i = segments.findIndex((s) => segKey(s.a, s.b) === k);
+      const seg = { a: { c: a.c, r: a.r }, b: { c: b.c, r: b.r }, dashed };
+      if (i >= 0) segments[i] = seg;
+      else segments.push(seg);
+      verts.add(key(a.c, a.r));
+      verts.add(key(b.c, b.r));
+      lastSeg = seg;
+    }
+    canvas.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      if (lesson.netErase) {
+        const i = nearestSeg(e);
+        if (i >= 0) {
+          const gone = segments.splice(i, 1)[0];
+          if (lastSeg === gone) lastSeg = null;
+          const used = new Set();
+          segments.forEach((s) => {
+            used.add(key(s.a.c, s.a.r));
+            used.add(key(s.b.c, s.b.r));
+          });
+          [...verts].forEach((k) => { if (!used.has(k)) verts.delete(k); });
+          if (active && !verts.has(key(active.c, active.r))) active = null;
+          draw();
+          placeBar();
+        }
+        return;
+      }
+      const hit = snap(e);
+      if (!hit) return;
+      if (!active || sameEdge(active, hit)) {
+        active = hit;
+        verts.add(key(hit.c, hit.r));
+      } else {
+        addSeg(active, hit, lineMode === "dashed");
+        active = hit;
+      }
+      draw();
+      placeBar();
+    });
+    bar?.addEventListener("pointerdown", (e) => e.stopPropagation());
+    bar?.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-style]");
+      if (!btn) return;
+      lineMode = btn.dataset.style;
+      $$(".net-style-btn", bar).forEach((b) => b.classList.toggle("on", b === btn));
+      if (lastSeg) {
+        lastSeg.dashed = lineMode === "dashed";
+        draw();
+      }
+    });
+    return {
+      clear() {
+        segments.length = 0;
+        verts.clear();
+        active = null;
+        lastSeg = null;
+        lineMode = "solid";
+        draw();
+        placeBar();
+      },
+      example(cells) {
+        this.clear();
+        const boxes = cells;
+        boxes.forEach((box) => {
+          const { c0, r0, c1, r1 } = box;
+          const corners = [
+            { c: c0, r: r0 }, { c: c1, r: r0 }, { c: c1, r: r1 }, { c: c0, r: r1 }
+          ];
+          corners.forEach((p, i) => addSeg(p, corners[(i + 1) % 4], false));
+        });
+        active = null;
+        draw();
+        placeBar();
+      }
+    };
+  }
+  const netCanvas = $("#netCanvas");
+  const isoCanvas = $("#isoCanvas");
+  const netBoard = netCanvas ? netLineBoard(netCanvas) : null;
+  let isoCtx = null;
+  if (isoCanvas) {
+    isoCtx = isoCanvas.getContext("2d");
+    const drawIsoBg = () => {
+      isoCtx.clearRect(0, 0, isoCanvas.width, isoCanvas.height);
+    };
+    drawIsoBg();
+    let drawing = false, last = null;
+    function pos(e) {
+      const r = isoCanvas.getBoundingClientRect();
+      return { x: (e.clientX - r.left) * (isoCanvas.width / r.width), y: (e.clientY - r.top) * (isoCanvas.height / r.height) };
+    }
+    isoCanvas.addEventListener("pointerdown", (e) => {
+      drawing = true; last = pos(e);
+      isoCtx.lineCap = "round"; isoCtx.lineJoin = "round";
+      isoCtx.globalCompositeOperation = lesson.isoErase ? "destination-out" : "source-over";
+      isoCtx.strokeStyle = "#222"; isoCtx.lineWidth = lesson.isoErase ? 18 : 3;
+      isoCtx.beginPath(); isoCtx.moveTo(last.x, last.y);
+    });
+    isoCanvas.addEventListener("pointermove", (e) => {
+      if (!drawing) return;
+      const p = pos(e);
+      isoCtx.lineTo(p.x, p.y); isoCtx.stroke();
+      isoCtx.beginPath(); isoCtx.moveTo(p.x, p.y);
+    });
+    window.addEventListener("pointerup", () => { drawing = false; });
+    isoCanvas._clear = () => { isoCtx.globalCompositeOperation = "source-over"; drawIsoBg(); };
+    isoCanvas._example = () => {
+      drawIsoBg();
+      isoCtx.strokeStyle = "#222"; isoCtx.lineWidth = 3; isoCtx.globalCompositeOperation = "source-over";
+      isoCtx.beginPath();
+      isoCtx.moveTo(160, 80); isoCtx.lineTo(320, 40); isoCtx.lineTo(400, 90); isoCtx.lineTo(240, 130); isoCtx.closePath();
+      isoCtx.moveTo(160, 80); isoCtx.lineTo(160, 180); isoCtx.lineTo(240, 230); isoCtx.lineTo(240, 130);
+      isoCtx.moveTo(240, 230); isoCtx.lineTo(400, 190); isoCtx.lineTo(400, 90);
+      isoCtx.stroke();
+      isoCtx.setLineDash([8, 6]);
+      isoCtx.beginPath();
+      isoCtx.moveTo(160, 80); isoCtx.lineTo(160, 180);
+      isoCtx.moveTo(160, 180); isoCtx.lineTo(320, 140);
+      isoCtx.moveTo(320, 40); isoCtx.lineTo(320, 140);
+      isoCtx.stroke();
+      isoCtx.setLineDash([]);
+    };
+  }
+  $("#netEraser")?.addEventListener("click", () => {
+    lesson.netErase = !lesson.netErase;
+    $("#netEraser").classList.toggle("on", lesson.netErase);
+    if (lesson.netErase) $("#netStyleBar")?.classList.remove("show");
+    $("#netCanvas")?.classList.toggle("erasing", lesson.netErase);
+  });
+  $("#supplyBtn")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const panel = panels.supplies;
+    if (panel?.classList.contains("show")) {
+      closeAll();
+      return;
+    }
+    openPanel("supplies");
+  });
+  $("#isoEraser")?.addEventListener("click", () => {
+    lesson.isoErase = !lesson.isoErase;
+    $("#isoEraser").classList.toggle("on", lesson.isoErase);
+  });
+  function hideKbHint() {
+    $("#kbHintTag")?.classList.remove("show");
+    $("#kbHintBtn")?.setAttribute("aria-expanded", "false");
+  }
+  $("#kbHintBtn")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const tag = $("#kbHintTag");
+    if (!tag) return;
+    const on = tag.classList.toggle("show");
+    $("#kbHintBtn").setAttribute("aria-expanded", on ? "true" : "false");
+  });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("#kbHintBtn") && !e.target.closest("#kbHintTag")) hideKbHint();
+  });
+
+  const chickPaint = $("#chickPaint");
+  const chickImg = document.querySelector('[data-page="8"] img');
+  let chickSrc = null;
+  function loadChickSrc() {
+    if (!chickPaint || !chickImg || !chickImg.naturalWidth) return;
+    try {
+      const off = document.createElement("canvas");
+      off.width = chickPaint.width;
+      off.height = chickPaint.height;
+      const octx = off.getContext("2d");
+      octx.drawImage(chickImg, 0, 0, off.width, off.height);
+      chickSrc = octx.getImageData(0, 0, off.width, off.height);
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+  if (chickImg) {
+    if (chickImg.complete) loadChickSrc();
+    chickImg.addEventListener("load", loadChickSrc);
+  }
+  function chickBoundary(i) {
+    if (!chickSrc) return true;
+    const r = chickSrc.data[i];
+    const g = chickSrc.data[i + 1];
+    const b = chickSrc.data[i + 2];
+    const lum = (r + g + b) / 3;
+    if (lum < 150) return true;
+    if (b < 90 && r < 170 && g < 170) return true;
+    return false;
+  }
+  function findChickSeed(sx, sy) {
+    const w = chickSrc.width;
+    const h = chickSrc.height;
+    sx = Math.round(sx);
+    sy = Math.round(sy);
+    if (sx >= 0 && sy >= 0 && sx < w && sy < h && !chickBoundary((sy * w + sx) * 4)) return [sx, sy];
+    for (let r = 1; r <= 18; r++) {
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          const x = sx + dx;
+          const y = sy + dy;
+          if (x < 0 || y < 0 || x >= w || y >= h) continue;
+          if (!chickBoundary((y * w + x) * 4)) return [x, y];
+        }
+      }
+    }
+    return [sx, sy];
+  }
+  function fillChick(ctx, fx, fy, rgb) {
+    if (!chickSrc) return;
+    const w = chickSrc.width;
+    const h = chickSrc.height;
+    const dest = ctx.getImageData(0, 0, w, h);
+    const d = dest.data;
+    const [sx, sy] = findChickSeed(fx / 100 * w, fy / 100 * h);
+    const maxR2 = 34 * 34;
+    const stack = [sx, sy];
+    const seen = new Uint8Array(w * h);
+    while (stack.length) {
+      const y = stack.pop();
+      const x = stack.pop();
+      if (x < 0 || y < 0 || x >= w || y >= h) continue;
+      const p = y * w + x;
+      if (seen[p]) continue;
+      seen[p] = 1;
+      const dx = x - sx;
+      const dy = y - sy;
+      if (dx * dx + dy * dy > maxR2) continue;
+      const i = p * 4;
+      if (chickBoundary(i)) continue;
+      d[i] = rgb[0];
+      d[i + 1] = rgb[1];
+      d[i + 2] = rgb[2];
+      d[i + 3] = 255;
+      stack.push(x + 1, y, x - 1, y, x, y + 1, x, y - 1);
+    }
+    ctx.putImageData(dest, 0, 0);
+  }
+  const CHICK_YELLOW = [255, 253, 0];
+  const CHICK_WHITE = [255, 255, 255];
+  const CHICK_DEFAULT = { 1: "good", 2: "bad", 3: "ok", 4: "good" };
+  function paintChicks() {
+    if (!chickPaint) return;
+    if (!chickSrc) loadChickSrc();
+    const ctx = chickPaint.getContext("2d");
+    ctx.clearRect(0, 0, chickPaint.width, chickPaint.height);
+    $$(".chicks button").forEach((btn) => {
+      fillChick(ctx, Number(btn.dataset.fx), Number(btn.dataset.fy), btn.classList.contains("on") ? CHICK_YELLOW : CHICK_WHITE);
+    });
+  }
+  function restoreChicks() {
+    $$(".chicks").forEach((group) => {
+      const mood = CHICK_DEFAULT[group.dataset.reflect];
+      $$("button", group).forEach((b) => {
+        const on = b.dataset.mood === mood;
+        b.classList.toggle("on", on);
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+    });
+    lesson.reflect = { ...CHICK_DEFAULT };
+    if (chickPaint) chickPaint.getContext("2d").clearRect(0, 0, chickPaint.width, chickPaint.height);
+  }
+  $$(".chicks button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const group = btn.closest(".chicks");
+      $$("button", group).forEach((b) => {
+        b.classList.remove("on");
+        b.setAttribute("aria-pressed", "false");
+      });
+      btn.classList.add("on");
+      btn.setAttribute("aria-pressed", "true");
+      lesson.reflect[group.dataset.reflect] = btn.dataset.mood;
+      paintChicks();
+    });
+  });
+
+  function resetSlide(n, keepSubpage) {
+    if (n === 2) {
+      $$("[data-q]").forEach((s) => {
+        s.dataset.value = "";
+        s.classList.remove("open");
+        const btn = s.querySelector(".sel-btn");
+        if (btn) btn.textContent = "";
+        $$("li", s).forEach((li) => li.removeAttribute("aria-selected"));
+      });
+    }
+    if (n === 3) returnChips();
+    if (n === 4) setQ3Step(keepSubpage ? lesson.q3step : 0);
+    if (n === 5) {
+      netBoard?.clear();
+      lesson.netErase = false;
+      $("#netEraser")?.classList.remove("on");
+      $("#netCanvas")?.classList.remove("erasing");
+      $("#netExampleBtn")?.classList.remove("is-close");
+      $("#netExampleBtn")?.setAttribute("aria-pressed", "false");
+      $("#netExampleBtn")?.setAttribute("title", "예시");
+      $("#netHintTag")?.classList.remove("show");
+      $("#netSampleLabel")?.classList.remove("show");
+    }
+    if (n === 6) {
+      lesson.people.clear();
+      $$(".talk-card").forEach((c) => c.classList.remove("on"));
+    }
+    if (n === 7) {
+      isoCanvas?._clear();
+      lesson.isoErase = false;
+      $("#isoEraser")?.classList.remove("on");
+      if ($("#reasonInput")) $("#reasonInput").value = "";
+      $("#reasonExample")?.classList.remove("show");
+      $("#reasonExampleBtn")?.classList.remove("is-close");
+      $("#reasonExampleBtn")?.setAttribute("aria-pressed", "false");
+      $("#reasonExampleBtn")?.setAttribute("title", "예시");
+      hideKbHint();
+    }
+    if (n === 8) restoreChicks();
+  }
+
+  document.addEventListener("click", (e) => {
+    const reset = e.target.closest("[data-reset]");
+    const check = e.target.closest("[data-check]");
+    const example = e.target.closest("[data-example]");
+    if (reset) {
+      const n = Number(reset.dataset.reset);
+      resetSlide(n, n === 4);
+      toast("입력을 지웠습니다.");
+    }
+    if (check) {
+      const n = Number(check.dataset.check);
+      let ok = false;
+      if (n === 2) {
+        ok = $('[data-q="cuboid"]')?.dataset.value === "직육면체" && $('[data-q="cube"]')?.dataset.value === "정육면체";
+      }
+      if (n === 3) {
+        const zones = $$(".drop-zone");
+        ok = zones.length > 0 && zones.every((z) => z.dataset.placed === z.dataset.accept);
+      }
+      if (n === 4) {
+        ok = lesson.q3step === 0
+          ? lesson.pickedFaces.size === 1 && lesson.pickedFaces.has("right")
+          : ["front", "back", "top", "bottom"].every((f) => lesson.pickedFaces.has(f)) && !lesson.pickedFaces.has("left") && !lesson.pickedFaces.has("right");
+      }
+      if (n === 6) {
+        ok = lesson.people.has("주아") && lesson.people.has("은찬") && !lesson.people.has("윤호");
+      }
+      toast(ok ? "정답입니다!" : "다시 생각해 보세요.");
+    }
+    if (example) {
+      const n = Number(example.dataset.example);
+      if (n === 5) {
+        const btn = $("#netExampleBtn") || example;
+        const tag = $("#netHintTag");
+        const label = $("#netSampleLabel");
+        const on = !btn?.classList.contains("is-close");
+        btn?.classList.toggle("is-close", on);
+        btn?.setAttribute("aria-pressed", on ? "true" : "false");
+        btn?.setAttribute("title", on ? "예시 닫기" : "예시");
+        tag?.classList.toggle("show", on);
+        label?.classList.toggle("show", on);
+        if (on) {
+          netBoard?.example([
+            { c0: 6, r0: 2, c1: 11, r1: 4 },
+            { c0: 4, r0: 4, c1: 6, r1: 7 },
+            { c0: 6, r0: 4, c1: 11, r1: 7 },
+            { c0: 11, r0: 4, c1: 13, r1: 7 },
+            { c0: 6, r0: 7, c1: 11, r1: 9 }
+          ]);
+        } else {
+          netBoard?.clear();
+        }
+      }
+      if (n === 7) {
+        const box = $("#reasonExample");
+        const btn = $("#reasonExampleBtn") || example;
+        const on = !box?.classList.contains("show");
+        box?.classList.toggle("show", on);
+        btn?.classList.toggle("is-close", on);
+        btn?.setAttribute("aria-pressed", on ? "true" : "false");
+        btn?.setAttribute("title", on ? "예시 닫기" : "예시");
+        if (on) isoCanvas?._example();
+        else isoCanvas?._clear();
+      }
+    }
   });
 
   renderPage();
@@ -799,7 +1492,7 @@
   const boot = location.hash.replace("#", "");
   if (boot === "ai") openPanel("ai");
   else if (boot === "game") openPanel("game");
-  else if (boot === "timer" || boot === "draw" || boot === "toolkit") openPanel("toolkit");
+  else if (boot === "timer" || boot === "pick" || boot === "draw" || boot === "toolkit") openPanel("toolkit");
   else if (boot === "monitor") { renderStudents(); openPanel("monitor"); }
   else if (boot && panels[boot]) openPanel(boot);
 })();
