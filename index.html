@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>6. 다각형 | AIDT 수업 화면</title>
+  <title>5. 직육면체 | AIDT 수업 화면 (데모)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" />
+  <link rel="stylesheet" href="css/style.css?v=png49" />
 </head>
-<body>
+<body class="is-demo">
   <div class="app">
     <header class="header">
       <div class="header-left">
@@ -15,18 +16,21 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <div class="title-wrap">
-          <h1>6. 다각형</h1>
-          <p>생각을 더하다 - 공학 도구를 사용하여 나만의 모양을 만들어 볼까요</p>
+          <div class="title-row">
+            <h1>5. 직육면체</h1>
+            <span class="demo-badge" title="에듀테크 코리아페어 전시용 데모입니다. 실제 AIDT 수업 화면과 기능·모양이 다를 수 있습니다.">데모</span>
+          </div>
+          <p>공부한 내용을 확인해요 <span class="demo-note">· 실제 수업 화면과 다를 수 있습니다</span></p>
         </div>
       </div>
 
       <div class="zoom">
-        <button type="button" id="zoomOut" aria-label="축소">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
-        </button>
-        <span class="zoom-value" id="zoomValue">100 %</span>
         <button type="button" id="zoomIn" aria-label="확대">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
+        <span class="zoom-value" id="zoomValue">100 %</span>
+        <button type="button" id="zoomOut" aria-label="축소">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
         </button>
       </div>
 
@@ -37,222 +41,193 @@
           <button class="icon-btn" id="btnLock" data-feature="lock" aria-label="화면 잠금">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 11V8a4 4 0 018 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           </button>
-          <i class="hotspot" style="top:-8px;right:-8px">1</i>
         </span>
         <span style="position:relative">
           <button class="icon-btn" data-feature="monitor" aria-label="학급 모니터링">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           </button>
-          <i class="hotspot" style="top:-8px;right:-8px">2</i>
         </span>
         <span style="position:relative">
           <button class="icon-btn" id="btnShare" data-feature="share" aria-label="주목하기">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
           </button>
-          <i class="hotspot" style="top:-8px;right:-8px">3</i>
         </span>
         <span style="position:relative">
           <button class="icon-btn" id="btnAnno" data-feature="annotate" aria-label="판서">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 20l4.5-1.2L20 7.3 16.7 4 5.2 15.5 4 20z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
           </button>
-          <i class="hotspot" style="top:-8px;right:-8px">4</i>
         </span>
         </div>
 
         <div class="class-time">수업 시간 <b id="classTimer">00:11</b></div>
         <span style="position:relative">
           <button class="btn-orange" data-feature="end">수업 종료</button>
-          <i class="hotspot" style="top:-8px;right:-8px">5</i>
         </span>
       </div>
     </header>
 
     <main class="main">
-      <section class="page cover-page" data-page="1">
-        <div class="cover-top">
-          <div class="think-badge">
-            <p class="think-title">생각을 <span>더하다</span></p>
-            <svg class="cat-art" viewBox="0 0 88 72" aria-hidden="true">
-              <rect x="22" y="42" width="44" height="22" rx="4" fill="#6bb13a"/>
-              <rect x="58" y="28" width="8" height="24" rx="2" fill="#5a9a30"/>
-              <ellipse cx="44" cy="38" rx="16" ry="13" fill="#d9a06a"/>
-              <circle cx="44" cy="22" r="11" fill="#d9a06a"/>
-              <polygon points="34,16 36,6 42,16" fill="#d9a06a"/>
-              <polygon points="46,16 52,6 54,16" fill="#d9a06a"/>
-              <circle cx="40" cy="21" r="1.4" fill="#3a2a1a"/>
-              <circle cx="48" cy="21" r="1.4" fill="#3a2a1a"/>
-              <ellipse cx="44" cy="25" rx="2" ry="1.2" fill="#c27a4a"/>
-              <rect x="36" y="30" width="16" height="10" rx="1" fill="#f4a24a"/>
-              <path d="M38 33h12M38 36h12" stroke="#fff" stroke-width="1"/>
-            </svg>
-            <span class="think-ribbon">수학 + 정보</span>
-          </div>
-          <h2 class="cover-title">공학 도구를 사용하여 나만의 모양을 만들어 볼까요
-            <span class="crea-tag">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 21h6M10 17h4M12 3a6 6 0 00-3 11c.5 1 1 2 1 3h4c0-1 .5-2 1-3a6 6 0 00-3-11z" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
-              창의+
-            </span>
-          </h2>
-        </div>
-        <div class="learn-panel">
-          <div class="learn-tab">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 5h11a3 3 0 013 3v12H8a3 3 0 01-3-3V5z" stroke="#fff" stroke-width="1.8"/><path d="M5 16h13" stroke="#fff" stroke-width="1.8"/></svg>
-            이번 시간에 배울 내용
-          </div>
-          <div class="learn-inner">
-            <svg class="hand-cursor" viewBox="0 0 64 64" aria-hidden="true">
-              <path d="M28 8c1.6 0 3 1.4 3 3v16l8-6c2-1.6 5 .2 5 2.6V42c0 8-6 14-14 14h-2c-9 0-16-6-18-14l-3-10c-.6-2 1-4 3.2-3.4L22 32V11c0-1.6 1.4-3 3-3h3z" fill="#fff" stroke="#333" stroke-width="2.2" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </div>
+      <div class="slide-zoom" id="slideZoom">
+      <section class="page img-page active" data-page="1">
+        <div class="slide-stage"><div class="slide-fit"><img src="slides/slide1.png" alt="1번 슬라이드"></div></div>
       </section>
 
-      <section class="page howto-page" data-page="2">
-        <div class="prompt">
-          <div class="prompt-num">1</div>
-          <div class="prompt-body">
-            <p class="lead">공학 도구를 사용하여 여러 가지 다각형을 만들어 봅시다.</p>
+      <section class="page img-page" data-page="2">
+        <div class="slide-stage"><div class="slide-fit">
+          <img src="slides/slide2.png" alt="2번 슬라이드">
+          <div class="hot sel-wrap sel-a" data-q="cuboid">
+            <button type="button" class="sel-btn" aria-haspopup="listbox" aria-label="직육면체 이름"></button>
+            <ul class="sel-list" role="listbox">
+              <li role="option" data-value="직육면체">직육면체</li>
+              <li role="option" data-value="정육면체">정육면체</li>
+            </ul>
           </div>
-        </div>
-        <div class="howto-wrap">
-          <div class="howto-win">
-            <div class="howto-bar">
-              <span class="howto-dots"><i style="background:#ef6a4c"></i><i style="background:#f6c445"></i><i style="background:#63c06a"></i></span>
-              다각형 만들기
-            </div>
-            <div class="howto-body">
-              <div class="howto-col">
-                <h4><span class="n">1</span><span>도구에서 <b>다각형</b>을 누릅니다.</span></h4>
-                <ul class="tool-menu">
-                  <li>▲ 삼각형</li>
-                  <li>■ 사각형</li>
-                  <li>✎ 컴퍼스</li>
-                  <li class="on">⬡ 다각형</li>
-                  <li>⬡ 정다각형 : 한 변</li>
-                </ul>
-              </div>
-              <div class="howto-col">
-                <h4><span class="n">2</span><span>꼭짓점을 차례대로 선택하고, 마지막으로 처음 꼭짓점을 다시 선택하여 다각형을 만듭니다.</span></h4>
-                <div class="draw-demo">
-                  <svg class="grid-mini" viewBox="0 0 140 140">
-                    <polygon points="40,30 100,30 110,70 90,110 40,110 28,70" fill="none" stroke="#4a90e2" stroke-width="2" stroke-dasharray="4 3"/>
-                    <circle cx="40" cy="30" r="4" fill="#4a90e2"/><circle cx="100" cy="30" r="4" fill="#4a90e2"/><circle cx="110" cy="70" r="4" fill="#4a90e2"/><circle cx="90" cy="110" r="4" fill="#4a90e2"/><circle cx="40" cy="110" r="4" fill="#4a90e2"/><circle cx="28" cy="70" r="4" fill="#4a90e2"/>
-                  </svg>
-                  <span style="color:#4a90e2;font-size:22px">➜</span>
-                  <svg class="grid-mini" viewBox="0 0 140 140">
-                    <polygon points="40,30 100,30 110,70 90,110 40,110 28,70" fill="#f2a0a0" fill-opacity=".7" stroke="#e57373" stroke-width="2"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
+          <div class="hot sel-wrap sel-b" data-q="cube">
+            <button type="button" class="sel-btn" aria-haspopup="listbox" aria-label="정육면체 이름"></button>
+            <ul class="sel-list" role="listbox">
+              <li role="option" data-value="직육면체">직육면체</li>
+              <li role="option" data-value="정육면체">정육면체</li>
+            </ul>
           </div>
-          <button class="slide-next" type="button" id="slide2Next" aria-label="다음">›</button>
-        </div>
-        <p class="slide-source">(출처: 알지오매스키즈(AlgeoMathKids), 2023)</p>
+          <button type="button" class="hot hit reset" data-reset="2" title="초기화"></button>
+          <button type="button" class="hot hit check" data-check="2" title="확인"></button>
+          <div class="hot ex-tag t2" id="selHintTag" role="tooltip">클릭하여 답을 선택할 수 있습니다.</div>
+        </div></div>
       </section>
 
-      <section class="page page-canvas active" data-page="3">
-        <div class="prompt">
-          <div class="prompt-num">1</div>
-          <div class="prompt-body">
-            <p class="lead">공학 도구를 사용하여 여러 가지 다각형을 만들어 봅시다. <em>(AI 수학교구 메뉴를 활용해 보세요!)</em></p>
-            <p class="sub"><span class="bullet"></span> 주어진 다각형을 만들어 보세요.</p>
+      <section class="page img-page" data-page="3">
+        <div class="slide-stage"><div class="slide-fit">
+          <img src="slides/slide3.png" alt="3번 슬라이드">
+          <div class="hot chip-bank" id="labelBank">
+            <button type="button" class="drag-chip" draggable="true" data-label="꼭짓점">꼭짓점</button>
+            <button type="button" class="drag-chip" draggable="true" data-label="면">면</button>
+            <button type="button" class="drag-chip" draggable="true" data-label="모서리">모서리</button>
           </div>
-        </div>
-        <div class="board-stage">
-          <div class="board" id="board">
-            <svg viewBox="0 0 1100 500" preserveAspectRatio="xMidYMid meet" id="shapeSvg">
-              <g class="poly" data-name="삼각형">
-                <polygon points="145,40 50,205 240,205" fill="#c6e97a" stroke="#7cb342" stroke-width="2.5"/>
-                <circle class="vertex" cx="145" cy="40" r="5"/><circle class="vertex" cx="50" cy="205" r="5"/><circle class="vertex" cx="240" cy="205" r="5"/>
-              </g>
-              <g class="poly" data-name="정사각형">
-                <polygon points="390,48 545,48 545,203 390,203" fill="#ffb14a" stroke="#f57c00" stroke-width="2.5"/>
-                <circle class="vertex" cx="390" cy="48" r="5"/><circle class="vertex" cx="545" cy="48" r="5"/><circle class="vertex" cx="545" cy="203" r="5"/><circle class="vertex" cx="390" cy="203" r="5"/>
-              </g>
-              <g class="poly" data-name="평행사변형">
-                <polygon points="720,78 930,78 855,215 645,215" fill="#7fd8ea" stroke="#00acc1" stroke-width="2.5"/>
-                <circle class="vertex" cx="720" cy="78" r="5"/><circle class="vertex" cx="930" cy="78" r="5"/><circle class="vertex" cx="855" cy="215" r="5"/><circle class="vertex" cx="645" cy="215" r="5"/>
-              </g>
-              <g class="poly" data-name="사다리꼴">
-                <polygon points="70,285 235,285 280,445 25,445" fill="#f2a0a0" stroke="#e57373" stroke-width="2.5"/>
-                <circle class="vertex" cx="70" cy="285" r="5"/><circle class="vertex" cx="235" cy="285" r="5"/><circle class="vertex" cx="280" cy="445" r="5"/><circle class="vertex" cx="25" cy="445" r="5"/>
-              </g>
-              <g class="poly" data-name="마름모">
-                <polygon points="430,275 555,360 430,445 305,360" fill="#cfd6dc" stroke="#90a4ae" stroke-width="2.5"/>
-                <circle class="vertex" cx="430" cy="275" r="5"/><circle class="vertex" cx="555" cy="360" r="5"/><circle class="vertex" cx="430" cy="445" r="5"/><circle class="vertex" cx="305" cy="360" r="5"/>
-              </g>
-              <g class="poly" data-name="정육각형">
-                <polygon points="725,295 840,295 897,390 840,485 725,485 668,390" fill="#ffe082" stroke="#f9a825" stroke-width="2.5"/>
-                <circle class="vertex" cx="725" cy="295" r="5"/><circle class="vertex" cx="840" cy="295" r="5"/><circle class="vertex" cx="897" cy="390" r="5"/><circle class="vertex" cx="840" cy="485" r="5"/><circle class="vertex" cx="725" cy="485" r="5"/><circle class="vertex" cx="668" cy="390" r="5"/>
-              </g>
-            </svg>
-            <canvas class="draw-layer" id="drawCanvas"></canvas>
+          <div class="hot drop-zone z-vertex" data-accept="꼭짓점"></div>
+          <div class="hot drop-zone z-face" data-accept="면"></div>
+          <div class="hot drop-zone z-edge" data-accept="모서리"></div>
+          <button type="button" class="hot hit reset" data-reset="3" title="초기화"></button>
+          <button type="button" class="hot hit check" data-check="3" title="확인"></button>
+        </div></div>
+      </section>
+
+      <section class="page img-page" data-page="4">
+        <div class="slide-stage"><div class="slide-fit" id="q3fit">
+          <img class="q3-bg-main" src="slides/slide4.png" alt="4번 슬라이드">
+          <img class="q3-bg-alt" src="slides/slide4-1.png" alt="4번-1 슬라이드">
+          <svg class="hot face-hits" id="faceSvg" viewBox="0 0 1916 727" width="100%" height="100%" preserveAspectRatio="none">
+            <!-- 꼭짓점: ㄱ(893,302) ㄴ(758,417) ㄷ(1019,445) ㄹ(1155,324) ㅁ(894,411) ㅂ(758,533) ㅅ(1019,559) ㅇ(1155,441) -->
+            <polygon class="face-poly" data-face="bottom" points="894,411 758,533 1019,559 1155,441"></polygon>
+            <polygon class="face-poly" data-face="back" points="893,302 1155,324 1155,441 894,411"></polygon>
+            <polygon class="face-poly" data-face="left" points="893,302 758,417 758,533 894,411"></polygon>
+            <polygon class="face-poly" data-face="top" points="893,302 758,417 1019,445 1155,324"></polygon>
+            <polygon class="face-poly" data-face="right" points="1019,445 1155,324 1155,441 1019,559"></polygon>
+            <polygon class="face-poly" data-face="front" points="758,417 1019,445 1019,559 758,533"></polygon>
+          </svg>
+          <button type="button" class="hot face-name fn-top" data-face="top" aria-label="면 ㄱㄴㄷㄹ"></button>
+          <button type="button" class="hot face-name fn-back" data-face="back" aria-label="면 ㄱㅁㅇㄹ"></button>
+          <button type="button" class="hot face-name fn-front" data-face="front" aria-label="면 ㄴㅂㅅㄷ"></button>
+          <button type="button" class="hot face-name fn-right" data-face="right" aria-label="면 ㄷㅅㅇㄹ"></button>
+          <button type="button" class="hot face-name fn-bottom" data-face="bottom" aria-label="면 ㅁㅂㅅㅇ"></button>
+          <button type="button" class="hot hit prev" id="q3prev" aria-label="이전 물음"></button>
+          <button type="button" class="hot hit next" id="q3next" aria-label="다음 물음"></button>
+          <button type="button" class="hot hit reset" data-reset="4" title="초기화"></button>
+          <button type="button" class="hot hit check" data-check="4" title="확인"></button>
+        </div></div>
+      </section>
+
+      <section class="page img-page" data-page="5">
+        <div class="slide-stage"><div class="slide-fit">
+          <img src="slides/slide5.png" alt="5번 슬라이드">
+          <button type="button" class="hot supply-btn" id="supplyBtn" title="준비물" aria-label="준비물"></button>
+          <div class="hot ex-tag supply" id="supplyHintTag" role="tooltip">클릭하여 수업에 필요한 준비물을<br>확인할 수 있습니다.</div>
+          <canvas class="hot net-canvas" id="netCanvas" width="840" height="420"></canvas>
+          <div class="hot net-style-bar" id="netStyleBar">
+            <i class="net-style-arrow" aria-hidden="true"></i>
+            <button type="button" class="net-style-btn on" data-style="solid" title="실선" aria-label="실선">
+              <svg viewBox="0 0 28 16" aria-hidden="true"><path d="M3 8h22" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+            </button>
+            <button type="button" class="net-style-btn" data-style="dashed" title="점선" aria-label="점선">
+              <svg viewBox="0 0 28 16" aria-hidden="true"><path d="M3 8h22" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="3.2 3.4"/></svg>
+            </button>
+          </div>
+          <button type="button" class="hot hit eraser" id="netEraser" title="지우개"></button>
+          <button type="button" class="hot hit reset" data-reset="5" title="초기화"></button>
+          <button type="button" class="hot hit example e5" id="netExampleBtn" data-example="5" title="예시" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
+          </button>
+          <div class="hot ex-tag t5" id="netHintTag" role="tooltip">클릭시 해당 문항에 대한 예시 답안을<br>확인하실 수 있습니다.</div>
+          <div class="hot net-sample-label" id="netSampleLabel">샘플 답안입니다.</div>
+        </div></div>
+      </section>
+
+      <section class="page img-page" data-page="6">
+        <div class="slide-stage"><div class="slide-fit">
+          <img src="slides/slide6.png" alt="6번 슬라이드">
+          <button type="button" class="hot talk-card p-yunho" data-person="윤호" aria-label="윤호"></button>
+          <button type="button" class="hot talk-card p-jua" data-person="주아" aria-label="주아"></button>
+          <button type="button" class="hot talk-card p-eunchan" data-person="은찬" aria-label="은찬"></button>
+          <button type="button" class="hot hit reset" data-reset="6" title="초기화"></button>
+          <button type="button" class="hot hit check" data-check="6" title="확인"></button>
+        </div></div>
+      </section>
+
+      <section class="page img-page" data-page="7">
+        <div class="slide-stage"><div class="slide-fit">
+          <img src="slides/slide7.png" alt="7번 슬라이드">
+          <canvas class="hot iso-canvas" id="isoCanvas" width="520" height="400"></canvas>
+          <button type="button" class="hot hit eraser iso-er" id="isoEraser" title="지우개"></button>
+          <input class="hot reason" id="reasonInput" type="text" placeholder="">
+          <div class="hot example-answer" id="reasonExample">
+            <span class="ex-badge">예</span>
+            <p>보이는 모서리는 실선으로, 보이지 않는 모서리는 점선으로 나타내어야 하는데 모든 모서리를 실선으로 나타내었습니다.</p>
+          </div>
+          <button type="button" class="hot hit kb" id="kbHintBtn" title="키보드" aria-expanded="false" aria-controls="kbHintTag"></button>
+          <div class="hot kb-tag" id="kbHintTag" role="tooltip">실제 수업에서는 숫자/연산 기호 등을<br>손 글씨로 작성할 수 있습니다.</div>
+          <button type="button" class="hot hit reset r7" data-reset="7" title="초기화"></button>
+          <button type="button" class="hot hit example e7" id="reasonExampleBtn" data-example="7" title="예시" aria-pressed="false" aria-describedby="exHintTag">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
+          </button>
+          <div class="hot ex-tag" id="exHintTag" role="tooltip">클릭시 해당 문항에 대한 예시 답안을<br>확인하실 수 있습니다.</div>
+        </div></div>
+      </section>
+
+      <section class="page img-page" data-page="8">
+        <div class="slide-stage"><div class="slide-fit">
+          <img src="slides/slide8.png?v=png35" alt="8번 슬라이드">
+          <canvas class="hot chick-paint" id="chickPaint" width="1920" height="728"></canvas>
+          <div class="hot chicks c1" data-reflect="1">
+            <button type="button" class="on" data-mood="good" data-fx="77.42" data-fy="24.65" aria-label="잘함" aria-pressed="true"></button>
+            <button type="button" data-mood="ok" data-fx="81.35" data-fy="24.65" aria-label="보통" aria-pressed="false"></button>
+            <button type="button" data-mood="bad" data-fx="85.12" data-fy="24.65" aria-label="어려움" aria-pressed="false"></button>
+          </div>
+          <div class="hot chicks c2" data-reflect="2">
+            <button type="button" data-mood="good" data-fx="77.42" data-fy="40.62" aria-label="잘함" aria-pressed="false"></button>
+            <button type="button" data-mood="ok" data-fx="81.35" data-fy="40.62" aria-label="보통" aria-pressed="false"></button>
+            <button type="button" class="on" data-mood="bad" data-fx="85.12" data-fy="40.62" aria-label="어려움" aria-pressed="true"></button>
+          </div>
+          <div class="hot chicks c3" data-reflect="3">
+            <button type="button" data-mood="good" data-fx="77.42" data-fy="55.34" aria-label="잘함" aria-pressed="false"></button>
+            <button type="button" class="on" data-mood="ok" data-fx="81.35" data-fy="55.34" aria-label="보통" aria-pressed="true"></button>
+            <button type="button" data-mood="bad" data-fx="85.12" data-fy="55.34" aria-label="어려움" aria-pressed="false"></button>
+          </div>
+          <div class="hot chicks c4" data-reflect="4">
+            <button type="button" class="on" data-mood="good" data-fx="77.42" data-fy="70.06" aria-label="잘함" aria-pressed="true"></button>
+            <button type="button" data-mood="ok" data-fx="81.35" data-fy="70.06" aria-label="보통" aria-pressed="false"></button>
+            <button type="button" data-mood="bad" data-fx="85.12" data-fy="70.06" aria-label="어려움" aria-pressed="false"></button>
+          </div>
+          <button type="button" class="hot hit reset r8" data-reset="8" title="초기화"></button>
+          <div class="hot ex-tag t8" id="reflectHintTag" role="tooltip">학생이 배운 내용에 대한 이해도를<br>스스로 판단해볼 수 있습니다.</div>
+        </div></div>
+      </section>
+      </div>
             <div class="lock-overlay" id="lockOverlay">
-              <div class="lock-card">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#fff" stroke-width="1.8"/></svg>
-                학생 화면이 잠겨 있습니다
-              </div>
-            </div>
-            <div class="share-banner" id="shareBanner">교사 화면을 학생에게 보여주고 있습니다</div>
-          </div>
+        <div class="lock-card">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#fff" stroke-width="1.8"/><path d="M8 11V8a4 4 0 018 0v3" stroke="#fff" stroke-width="1.8"/></svg>
+          학생 화면이 잠겨 있습니다
         </div>
-      </section>
-
-      <section class="page compose-page" data-page="4">
-        <div class="slide4-stage">
-          <div class="slide4-fit">
-            <img src="slides/slide4.png" alt="4번 슬라이드">
-            <textarea id="composeText" class="slide4-ta" aria-label="만든 모양 설명"></textarea>
-            <button class="slide4-hit reset" type="button" id="composeReset" aria-label="다시"></button>
-            <button class="slide4-hit send" type="button" id="composeSend" aria-label="보내기"></button>
-          </div>
-        </div>
-      </section>
-
-      <section class="page cover-page" data-page="5">
-        <div class="cover-top">
-          <div class="think-badge">
-            <p class="think-title">생각을 <span>더하다</span></p>
-            <svg class="cat-art" viewBox="0 0 88 72" aria-hidden="true">
-              <rect x="22" y="42" width="44" height="22" rx="4" fill="#6bb13a"/>
-              <rect x="58" y="28" width="8" height="24" rx="2" fill="#5a9a30"/>
-              <ellipse cx="44" cy="38" rx="16" ry="13" fill="#d9a06a"/>
-              <circle cx="44" cy="22" r="11" fill="#d9a06a"/>
-              <polygon points="34,16 36,6 42,16" fill="#d9a06a"/>
-              <polygon points="46,16 52,6 54,16" fill="#d9a06a"/>
-              <circle cx="40" cy="21" r="1.4" fill="#3a2a1a"/>
-              <circle cx="48" cy="21" r="1.4" fill="#3a2a1a"/>
-              <ellipse cx="44" cy="25" rx="2" ry="1.2" fill="#c27a4a"/>
-              <rect x="36" y="30" width="16" height="10" rx="1" fill="#f4a24a"/>
-              <path d="M38 33h12M38 36h12" stroke="#fff" stroke-width="1"/>
-            </svg>
-            <span class="think-ribbon">수학 + 정보</span>
-          </div>
-          <h2 class="cover-title">공학 도구를 사용하여 나만의 모양을 만들어 볼까요
-            <span class="crea-tag">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 21h6M10 17h4M12 3a6 6 0 00-3 11c.5 1 1 2 1 3h4c0-1 .5-2 1-3a6 6 0 00-3-11z" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
-              창의+
-            </span>
-          </h2>
-        </div>
-        <div class="learn-panel">
-          <div class="learn-tab">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 5h11a3 3 0 013 3v12H8a3 3 0 01-3-3V5z" stroke="#fff" stroke-width="1.8"/><path d="M5 16h13" stroke="#fff" stroke-width="1.8"/></svg>
-            다음 시간에는
-          </div>
-          <div class="learn-inner">
-            <div class="next-time-body">
-              <div class="play-pill">놀이를 <span>더하다</span></div>
-              <h3>다각형의 이름에 맞게 색칠해 볼까요</h3>
-              <p class="next-ref">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 5h11a3 3 0 013 3v12H8a3 3 0 01-3-3V5z" stroke="currentColor" stroke-width="1.8"/></svg>
-                『수학』 148~149쪽
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      </div>
+      <div class="share-banner" id="shareBanner">교사 화면을 학생에게 보여주고 있습니다</div>
       <canvas class="anno-overlay" id="annoCanvas"></canvas>
       <div class="anno-texts" id="annoTexts"></div>
       <div class="anno-bar" id="annoBar">
@@ -293,7 +268,6 @@
             </span>
             목록
           </button>
-          <i class="hotspot" style="top:-8px;right:-8px">6</i>
         </span>
         <button class="foot-btn" data-feature="report">
           <span class="ico" style="color:#e53935">
@@ -307,7 +281,9 @@
         <button class="pager-btn" id="prevPage" aria-label="이전 쪽">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14.5 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        <div class="pager-num"><span id="pageNow">3</span> / 5</div>
+        <div class="pager-now" id="pageNow">1</div>
+        <span class="pager-total">/ 8</span>
+        <span class="demo-pager">데모</span>
         <button class="pager-btn" id="nextPage" aria-label="다음 쪽">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9.5 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -321,7 +297,6 @@
             </span>
             수학 게임
           </button>
-          <i class="hotspot" style="top:-8px;right:-8px">7</i>
         </span>
         <span style="position:relative">
           <button class="foot-btn" data-feature="toolkit">
@@ -330,7 +305,6 @@
             </span>
             툴킷
           </button>
-          <i class="hotspot" style="top:-8px;right:-8px">8</i>
         </span>
         <span style="position:relative">
           <button class="foot-btn" data-feature="ai">
@@ -339,7 +313,6 @@
             </span>
             AI 수학교구
           </button>
-          <i class="hotspot" style="top:-8px;right:-8px">9</i>
         </span>
       </div>
     </footer>
@@ -351,12 +324,6 @@
     <div class="toc-head">
       <h3>수업 내용</h3>
       <div class="ai-chrome">
-        <button type="button" class="ai-chrome-btn" data-kit-msg="새 창에서 목록을 열었습니다. (데모)" aria-label="새 창">
-          <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="7" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M9 4h11v11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 4l-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-        </button>
-        <button type="button" class="ai-chrome-btn" data-kit-msg="목록 창을 크게 펼쳤습니다. (데모)" aria-label="최대화">
-          <svg viewBox="0 0 24 24" fill="none"><rect x="5" y="5" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.7"/></svg>
-        </button>
         <button class="close-x" data-close aria-label="닫기">&times;</button>
       </div>
     </div>
@@ -364,7 +331,7 @@
   </aside>
   <div class="toc-tip" id="tocTip">
     <span class="tag">개선</span>
-    <p>슬라이드별 성취 수준에 따라 컬러 태그가 보이게 됩니다.</p>
+    <p>정오답이 판별 가능한 문항에 대해 슬라이드별 성취 수준을 나타내는 컬러 태그가 보이게 됩니다.</p>
   </div>
 
   <div class="modal ai-modal" id="panelAi">
@@ -380,7 +347,7 @@
       </div>
     </div>
     <div class="ai-body">
-      <button type="button" class="math-tool" data-math-tool="매쓰 보드">
+      <button type="button" class="math-tool" data-math-tool="매쓰 보드" data-math-url="https://iscream.easypub.co.kr/2026/math/iscream_math_education_tools/src/tools/">
         <span class="math-tool-ico" aria-hidden="true">
           <svg viewBox="0 0 48 48">
             <polygon points="8,36 20,12 32,36" fill="#4c9aff"/>
@@ -554,6 +521,12 @@
       </div>
       <button type="button" class="ai-close-btn" data-close>닫기</button>
     </div>
+  </div>
+  <div class="toolkit-tip" id="toolkitTip" role="tooltip">아이스크림 사이트의 수업 도구들이<br>추가될 예정입니다.</div>
+
+  <div class="modal supplies-modal" id="panelSupplies">
+    <button type="button" class="supplies-x" data-close aria-label="닫기">×</button>
+    <img src="slides/supplies.png" alt="삼각자, 각도기, 자">
   </div>
 
   <div class="modal kit-win kit-score" id="panelScoreboard">
@@ -743,42 +716,42 @@
     <div class="game-top">
       <div class="game-unit-wrap">
         <button type="button" class="game-unit" id="gameUnit" aria-expanded="false">
-          <span id="gameUnitLabel">6. 다각형</span>
+          <span id="gameUnitLabel">5. 직육면체</span>
           <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <div class="game-unit-menu" id="gameUnitMenu" hidden>
           <button type="button" data-unit="5. 합동과 대칭">5. 합동과 대칭</button>
-          <button type="button" data-unit="6. 다각형" class="on">6. 다각형</button>
+          <button type="button" data-unit="5. 직육면체" class="on">5. 직육면체</button>
           <button type="button" data-unit="7. 원의 넓이">7. 원의 넓이</button>
         </div>
       </div>
-      <div class="game-toggle-wrap is-on" id="gameToggleWrap">
+      <div class="game-toggle-wrap" id="gameToggleWrap">
         <span class="game-info">
           <i class="game-i" aria-hidden="true">i</i>
           학생에게 수학 게임이 활성화됩니다.
         </span>
         <span class="game-sep" aria-hidden="true"></span>
         <span class="game-off">비활성</span>
-        <button type="button" class="game-switch on" id="gameSwitch" aria-pressed="true" aria-label="수학 게임 활성"></button>
+        <button type="button" class="game-switch" id="gameSwitch" aria-pressed="false" aria-label="수학 게임 비활성"></button>
         <span class="game-on">활성</span>
       </div>
     </div>
     <div class="game-grid">
-      <button type="button" class="game-card" data-game="매쓰애니멀런">
+      <button type="button" class="game-card" data-game="매쓰애니멀런" data-href="https://cdn.smart-aidt.com/stage/contents/resources/math_game/animal/index.html?grade=E5&semester=2&unit=402">
         <img src="img/animal.png" alt="매쓰애니멀런">
-        <span>6. 다각형</span>
+        <span>5. 직육면체</span>
       </button>
       <button type="button" class="game-card" data-game="매쓰 우주특급">
         <img src="img/space.png" alt="매쓰 우주특급">
-        <span>6. 다각형</span>
+        <span>5. 직육면체</span>
       </button>
       <button type="button" class="game-card" data-game="매쓰 노바 가디언즈">
         <img src="img/nova.png" alt="매쓰 노바 가디언즈">
-        <span>6. 다각형</span>
+        <span>5. 직육면체</span>
       </button>
       <button type="button" class="game-card" data-game="스노우 매쓰러시">
         <img src="img/snow.png" alt="스노우 매쓰러시">
-        <span>6. 다각형</span>
+        <span>5. 직육면체</span>
       </button>
     </div>
     <button type="button" class="ai-close-btn" data-close>닫기</button>
@@ -846,31 +819,23 @@
     </div>
   </div>
 
-  <div class="modal sm" id="panelBack">
-    <div class="modal-head">
-      <h3>차시 목록으로</h3>
-      <button class="close-x" data-close>&times;</button>
-    </div>
-    <div class="improve"><span class="tag">개선</span><p>뒤로 가기를 눌러도 판서와 학생 활동은 사라지지 않고 차시에 남아 있습니다.</p></div>
-    <div class="modal-body">
-      <p style="font-size:15px;line-height:1.6;margin-bottom:16px">6. 다각형 차시 목록으로 이동할까요?</p>
-      <div class="form-actions">
-        <button type="button" data-close>머무르기</button>
-        <button type="button" data-close style="background:var(--teal);color:#fff;border-color:var(--teal)">목록으로</button>
-      </div>
+  <div class="modal confirm" id="panelBack">
+    <p class="confirm-msg">수업 중입니다.<br>수업을 종료하고 나가시겠습니까?</p>
+    <div class="confirm-actions">
+      <button type="button" data-close>취소</button>
+      <button type="button" class="confirm-go" id="backLeave">나가기</button>
     </div>
   </div>
 
-  <div class="guide" id="guide">
-    <strong>박람회 발표용 화면</strong>
-    <p>원래 수업 화면과 같이 보이도록 만들었습니다. 상단·하단 메뉴를 누르면 개선 기능을 바로 보여 줍니다.</p>
-    <div class="guide-actions">
-      <button class="primary" id="toggleHotspots" type="button">번호 표시</button>
-      <button class="ghost" id="hideGuide" type="button">닫기</button>
+  <div class="tool-frame" id="toolFrame">
+    <div class="tool-frame-bar">
+      <strong id="toolFrameTitle">매쓰 보드</strong>
+      <button type="button" class="tool-frame-close" id="toolFrameClose">닫기</button>
     </div>
+    <iframe id="toolFrameIframe" title="매쓰 보드"></iframe>
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=png49"></script>
 </body>
 </html>
