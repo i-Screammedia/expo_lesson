@@ -145,6 +145,9 @@
     if (key === "toolkit") {
       requestAnimationFrame(() => requestAnimationFrame(placeToolkitTip));
     }
+    if (key === "ai") {
+      requestAnimationFrame(() => requestAnimationFrame(placeAiMathTip));
+    }
   }
 
   function placeToolkitTip() {
@@ -163,7 +166,24 @@
     tip.style.top = `${top}px`;
     tip.style.transform = "none";
   }
-  window.addEventListener("resize", placeToolkitTip);
+  function placeAiMathTip() {
+    const modal = panels.ai;
+    const tip = $("#aiMathTip");
+    const row = modal?.querySelector('[data-math-tool="매쓰 보드"]');
+    if (!modal?.classList.contains("show") || !tip || !row) return;
+    const modalBox = modal.getBoundingClientRect();
+    const rowBox = row.getBoundingClientRect();
+    tip.style.left = `${Math.round(modalBox.right + 14)}px`;
+    const tipH = tip.offsetHeight || 96;
+    let top = Math.round(rowBox.top + rowBox.height / 2 - 28);
+    top = Math.max(12, Math.min(top, window.innerHeight - tipH - 12));
+    tip.style.top = `${top}px`;
+    tip.style.transform = "none";
+  }
+  window.addEventListener("resize", () => {
+    placeToolkitTip();
+    placeAiMathTip();
+  });
 
   const KIT_SUB = ["scoreboard", "seats", "sfx", "boardwrite"];
   function kitSubOpen() {
