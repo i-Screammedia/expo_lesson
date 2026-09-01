@@ -1635,6 +1635,34 @@ body.is-annotating .slide-zoom { pointer-events: none; }
   place-items: center;
 }
 .math-tool-ico svg { width: 44px; height: 44px; }
+.ai-math-tip {
+  display: none;
+  position: fixed;
+  z-index: 55;
+  max-width: min(380px, 32vw);
+  padding: 18px 22px 20px;
+  background: #2a2e32;
+  color: #fff;
+  border-radius: 16px;
+  font-size: clamp(18px, 1.55vw, 22px);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+  box-shadow: 0 12px 32px rgba(20, 24, 28, 0.28);
+  pointer-events: none;
+}
+#panelAi.show + .ai-math-tip { display: block; }
+.ai-math-tip::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 28px;
+  width: 14px;
+  height: 14px;
+  background: #2a2e32;
+  transform: translateY(-50%) rotate(45deg);
+}
 .ai-close-btn {
   align-self: center;
   margin-top: 8px;
