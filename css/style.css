@@ -2774,6 +2774,178 @@ body.is-annotating .slide-zoom { pointer-events: none; }
 }
 .game-modal .ai-close-btn { margin-top: 8px; }
 
+.modal.report-modal {
+  width: min(760px, calc(100vw - 48px));
+  max-height: calc(100vh - 64px);
+  border-radius: 20px;
+  box-shadow: 0 16px 48px rgba(20, 24, 28, 0.22);
+  overflow: hidden;
+}
+.report-head {
+  padding: 28px 36px 4px;
+}
+.report-head h3 {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.report-body {
+  padding: 12px 36px 32px;
+  overflow: auto;
+}
+.report-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #e8f3ff;
+  border-radius: 16px;
+  padding: 14px 20px;
+  margin-bottom: 28px;
+}
+.report-mascot {
+  width: 78px;
+  height: 78px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+}
+.report-mascot svg { width: 78px; height: 78px; display: block; }
+.report-banner p {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.65;
+  letter-spacing: -0.02em;
+  color: #333;
+}
+.report-row {
+  display: grid;
+  grid-template-columns: 108px 1fr;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.report-row-top { align-items: start; }
+.report-row label,
+.report-file-label {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #222;
+}
+.report-row-top label,
+.report-row-top .report-file-label { padding-top: 12px; }
+.report-row label i {
+  color: #e53935;
+  font-style: normal;
+  margin-left: 2px;
+}
+.report-control { position: relative; }
+.report-control input,
+.report-types select,
+.report-control textarea {
+  width: 100%;
+  border: 1px solid #d8d8d8;
+  border-radius: 10px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 15px;
+  color: #222;
+  outline: none;
+}
+.report-control input {
+  height: 48px;
+  padding: 0 58px 0 16px;
+}
+.report-control input:focus,
+.report-types select:focus,
+.report-control textarea:focus {
+  border-color: #4c84f5;
+  box-shadow: 0 0 0 1px #4c84f5;
+}
+.report-count {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  font-weight: 500;
+  color: #9a9a9a;
+  pointer-events: none;
+}
+.report-types {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.report-types select {
+  height: 48px;
+  padding: 0 40px 0 14px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none'><path d='M6 9l6 6 6-6' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+.report-area textarea {
+  min-height: 132px;
+  padding: 14px 16px 28px;
+  resize: none;
+  line-height: 1.5;
+}
+.report-area .report-count {
+  top: auto;
+  bottom: 10px;
+  transform: none;
+}
+.report-upload {
+  display: grid;
+  place-items: center;
+  min-height: 118px;
+  border: 1px dashed #d0d0d0;
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+}
+.report-upload:hover { background: #fafafa; }
+.report-upload-ico {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+}
+.report-upload-ico svg { width: 48px; height: 48px; display: block; }
+.report-upload-name {
+  display: none;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4c84f5;
+}
+.report-upload.has-file .report-upload-name { display: block; }
+.report-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+.report-actions button {
+  min-width: 128px;
+  height: 52px;
+  padding: 0 28px;
+  border-radius: 12px;
+  border: 1px solid #d0d0d0;
+  background: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+}
+.report-actions button:hover { background: #f6f6f6; }
+.report-actions #reportSend {
+  background: #4c84f5;
+  border-color: #4c84f5;
+  color: #fff;
+}
+.report-actions #reportSend:hover { background: #3b6fe8; }
+
 .report dt { font-size: 12px; color: var(--sub); margin-top: 12px; }
 .report dd { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; }
 .report-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 12px 0 18px; }
