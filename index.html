@@ -6,7 +6,7 @@
   <title>5. 직육면체 | AIDT 수업 화면 (데모)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" />
-  <link rel="stylesheet" href="css/style.css?v=png68" />
+  <link rel="stylesheet" href="css/style.css?v=png69" />
 </head>
 <body class="is-demo">
   <div class="app">
@@ -809,30 +809,78 @@
     <button type="button" class="ai-close-btn" data-close>닫기</button>
   </div>
 
-  <div class="modal sm" id="panelReport">
-    <div class="modal-head">
+  <div class="modal report-modal" id="panelReport">
+    <div class="report-head">
       <h3>오류 신고</h3>
-      <button class="close-x" data-close>&times;</button>
     </div>
-    <div class="improve"><span class="tag">개선</span><p>현재 화면이 자동으로 첨부되어, 수업 중에도 빠르게 오류를 남길 수 있습니다.</p></div>
-    <div class="modal-body">
-      <div class="field">
-        <label>유형</label>
-        <select id="reportType">
-          <option>콘텐츠 오류</option>
-          <option>화면 오류</option>
-          <option>음성/미디어</option>
-          <option>기타</option>
-        </select>
+    <div class="report-body">
+      <div class="report-banner">
+        <span class="report-mascot" aria-hidden="true">
+          <svg viewBox="0 0 88 88">
+            <circle cx="44" cy="44" r="40" fill="#8ed12a"/>
+            <ellipse cx="44" cy="70" rx="18" ry="8" fill="#6fb31c"/>
+            <circle cx="32" cy="40" r="11" fill="#fff" stroke="#222" stroke-width="2.4"/>
+            <circle cx="56" cy="40" r="11" fill="#fff" stroke="#222" stroke-width="2.4"/>
+            <path d="M43 40h2" stroke="#222" stroke-width="2.4"/>
+            <circle cx="32" cy="41" r="3.2" fill="#222"/>
+            <circle cx="56" cy="41" r="3.2" fill="#222"/>
+            <path d="M36 56c5 5 11 5 16 0" fill="none" stroke="#222" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M62 28l18-16" stroke="#f4c542" stroke-width="6" stroke-linecap="round"/>
+            <path d="M78 10l6 6-4 2-4-4 2-4z" fill="#ee6aa7"/>
+            <path d="M62 28l-3 4 6 5 4-4z" fill="#f7e27a"/>
+          </svg>
+        </span>
+        <p>콘텐츠 이용 중 발견한 오류를 알려주세요.<br>작성해 주신 내용은 담당자가 신속하게 검토하겠습니다.<br>오류 화면을 함께 첨부해 주시면 더욱 빠른 확인에 도움이 됩니다.</p>
       </div>
-      <div class="field">
-        <label>내용</label>
-        <textarea id="reportText" placeholder="어떤 점이 이상한지 적어 주세요."></textarea>
+      <div class="report-row">
+        <label for="reportTitle">제목 <i>*</i></label>
+        <div class="report-control">
+          <input id="reportTitle" type="text" maxlength="50" placeholder="제목을 입력해 주세요.">
+          <span class="report-count" id="reportTitleCount">0/50</span>
+        </div>
       </div>
-      <p style="font-size:12px;color:#8a8a8a;margin-bottom:12px">첨부: 현재 수업 화면 캡처 (자동)</p>
-      <div class="form-actions">
+      <div class="report-row">
+        <label for="reportType">오류 유형 <i>*</i></label>
+        <div class="report-types">
+          <select id="reportType">
+            <option>내용/기술</option>
+            <option>학습 활동</option>
+            <option>기타</option>
+          </select>
+          <select id="reportDetail">
+            <option value="">상세 분류</option>
+            <option>오탈자</option>
+            <option>이미지/자료</option>
+            <option>기능 오류</option>
+            <option>기타</option>
+          </select>
+        </div>
+      </div>
+      <div class="report-row report-row-top">
+        <label for="reportText">오류 내용 <i>*</i></label>
+        <div class="report-control report-area">
+          <textarea id="reportText" maxlength="300" placeholder="내용을 입력해 주세요."></textarea>
+          <span class="report-count" id="reportTextCount">0/300</span>
+        </div>
+      </div>
+      <div class="report-row report-row-top">
+        <span class="report-file-label">첨부 파일</span>
+        <label class="report-upload" for="reportFile">
+          <input id="reportFile" type="file" accept="image/*" hidden>
+          <span class="report-upload-ico" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <path d="M14 10h14l8 8v20a4 4 0 01-4 4H14a4 4 0 01-4-4V14a4 4 0 014-4z" fill="#ececec" stroke="#bdbdbd" stroke-width="1.6"/>
+              <path d="M28 10v8h8" fill="none" stroke="#bdbdbd" stroke-width="1.6"/>
+              <circle cx="34" cy="34" r="9" fill="#3d7eff"/>
+              <path d="M34 30v8M30 34h8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="report-upload-name" id="reportFileName"></span>
+        </label>
+      </div>
+      <div class="report-actions">
         <button type="button" data-close>취소</button>
-        <button type="button" id="reportSend" style="background:var(--teal);color:#fff;border-color:var(--teal)">보내기</button>
+        <button type="button" id="reportSend">확인</button>
       </div>
     </div>
   </div>
@@ -892,6 +940,6 @@
     <p class="result-pop-note">실제 수업 화면과 다를 수 있습니다</p>
     <p class="result-pop-msg" id="resultPopMsg"></p>
   </div>
-  <script src="js/app.js?v=png64"></script>
+  <script src="js/app.js?v=png65"></script>
 </body>
 </html>
