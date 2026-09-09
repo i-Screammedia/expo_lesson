@@ -148,6 +148,7 @@
     if (key === "ai") {
       requestAnimationFrame(() => requestAnimationFrame(placeAiMathTip));
     }
+    if (key === "report") resetReportForm();
   }
 
   function placeToolkitTip() {
@@ -575,6 +576,39 @@
   }));
 
   /* Report / end / logout */
+  function updateReportCount(input, el, max) {
+    if (el) el.textContent = `${(input?.value || "").length}/${max}`;
+  }
+  function resetReportForm() {
+    if ($("#reportTitle")) $("#reportTitle").value = "";
+    if ($("#reportText")) $("#reportText").value = "";
+    if ($("#reportType")) $("#reportType").selectedIndex = 0;
+    if ($("#reportDetail")) $("#reportDetail").selectedIndex = 0;
+    const file = $("#reportFile");
+    if (file) file.value = "";
+    $("#reportFileName").textContent = "";
+    $("#reportFile")?.closest(".report-upload")?.classList.remove("has-file");
+    updateReportCount($("#reportTitle"), $("#reportTitleCount"), 50);
+    updateReportCount($("#reportText"), $("#reportTextCount"), 300);
+  }
+  $("#reportTitle")?.addEventListener("input", () => {
+    updateReportCount($("#reportTitle"), $("#reportTitleCount"), 50);
+  });
+  $("#reportText")?.addEventListener("input", () => {
+    updateReportCount($("#reportText"), $("#reportTextCount"), 300);
+  });
+  $("#reportFile")?.addEventListener("change", () => {
+    const file = $("#reportFile")?.files?.[0];
+    const name = $("#reportFileName");
+    const wrap = $("#reportFile")?.closest(".report-upload");
+    if (file && name) {
+      name.textContent = file.name;
+      wrap?.classList.add("has-file");
+    } else if (name) {
+      name.textContent = "";
+      wrap?.classList.remove("has-file");
+    }
+  });
   $("#reportSend").addEventListener("click", () => {
     closeAll();
     toast("오류 신고가 접수되었습니다. 감사합니다.");
