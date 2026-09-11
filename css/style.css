@@ -906,44 +906,43 @@ body.is-annotating .slide-zoom { pointer-events: none; }
   display: flex;
   position: relative;
   background: #fff;
-  border: 1px solid #d8d8d8;
-  border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(20, 24, 28, 0.14);
-  padding: 10px 14px;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 6px 22px rgba(20, 24, 28, 0.12);
+  padding: 10px 18px;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   pointer-events: auto;
 }
 .anno-bar.show { display: flex; }
 .anno-tool {
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   border-radius: 12px;
   display: grid;
   place-items: center;
   color: #222;
 }
-.anno-tool svg { width: 30px; height: 30px; }
+.anno-tool svg { width: 28px; height: 28px; display: block; }
 .anno-tool:hover { background: #f3f3f3; }
-.anno-tool.on { background: #eef4ff; color: #3b6fe8; }
+.anno-tool.on { background: #eef4ff; color: #222; }
 .anno-tool.color.on {
   background: #eef4ff;
-  box-shadow: inset 0 0 0 1.5px #3b6fe8;
+  box-shadow: none;
 }
 .anno-sep {
-  width: 22px;
-  height: 5px;
+  width: 20px;
+  height: 7px;
   border-radius: 999px;
   background: #222;
-  margin: 0 8px;
+  margin: 0 10px;
 }
 .anno-dot {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--anno-color, #222);
   display: block;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.15);
 }
 
 .lesson-card {
@@ -1581,6 +1580,53 @@ body.is-annotating .slide-zoom { pointer-events: none; }
   color: #fff;
 }
 .confirm-actions .confirm-go:hover { background: #3b6fe8; }
+.modal.end-modal {
+  width: min(540px, calc(100vw - 80px));
+  padding: 84px 48px 64px;
+  border-radius: 36px;
+  box-shadow: 0 16px 48px rgba(20, 24, 28, 0.16);
+  overflow: hidden;
+  align-items: center;
+}
+.end-modal .end-msg {
+  width: 100%;
+  margin: 0 0 56px;
+  text-align: center;
+  font-size: clamp(24px, 2.15vw, 28px);
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: -0.04em;
+  color: #111;
+  word-break: keep-all;
+}
+.end-modal .end-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  width: min(332px, 100%);
+}
+.end-modal .end-actions button {
+  flex: 1;
+  height: 60px;
+  border-radius: 16px;
+  border: 1.5px solid #e0e0e0;
+  background: #fff;
+  color: #222;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.end-modal .end-actions button:hover {
+  background: #f7f7f7;
+}
+.end-modal .end-actions .end-ok {
+  background: #3d7eff;
+  border-color: #3d7eff;
+  color: #fff;
+}
+.end-modal .end-actions .end-ok:hover {
+  background: #2f6ef0;
+}
 .modal.md { width: min(560px, calc(100vw - 48px)); }
 .modal.ai-modal {
   width: min(520px, calc(100vw - 48px));
