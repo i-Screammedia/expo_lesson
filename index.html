@@ -6,7 +6,7 @@
   <title>5. 직육면체 | AIDT 수업 화면 (데모)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" />
-  <link rel="stylesheet" href="css/style.css?v=png69" />
+  <link rel="stylesheet" href="css/style.css?v=png74" />
 </head>
 <body class="is-demo">
   <div class="app">
@@ -283,29 +283,55 @@
         </div>
         <div class="anno-bar" id="annoBar">
         <button type="button" class="anno-tool" data-anno="text" title="텍스트">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h9M8.5 6v14M15 10h6M18 10v10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <text x="12" y="17.2" text-anchor="middle" font-family="Times New Roman, Noto Serif KR, serif" font-size="13.2" font-weight="700" fill="currentColor">TT</text>
+          </svg>
         </button>
         <button type="button" class="anno-tool on" data-anno="pen" title="펜">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M4 20l4.2-1.1L19 8.1 15.9 5 5.1 15.8 4 20z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M7 21h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M14.2 4.6l5.2 5.2L8.6 19.9H4.1v-4.5L14.2 4.6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            <path d="M13.1 6.2l4.7 4.7" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M4.2 21h10.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
         </button>
         <button type="button" class="anno-tool" data-anno="highlighter" title="형광펜">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M5 20l4-1 10-10-3.5-3.5L5.5 15.5 5 20z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M7 21h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M8.2 13.2L16.6 4.8l3.6 3.6-8.4 8.4H8.2v-3.6z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            <path d="M9.6 11.6l3.8 3.8" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M4.4 21h12.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
         </button>
         <button type="button" class="anno-tool" data-anno="eraser" title="지우개">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M15 5l6 6-8 8H7l-4-4 8-8 4-2z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M7 21h4M18.5 4.5l.8-1.6M20.8 6.2l1.6-.6M21 8.8l1.5.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M8.6 8.2l8.6 8.6-3.6 3.2H7.4L4.8 17l3.8-8.8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            <path d="M8.8 8.4l4.2 4.2" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M4.2 16.6l-1.6 1.2M3.4 14.6l-1.8.2M5.6 18.6l-.4 1.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M4.6 21.2h13.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
         </button>
         <button type="button" class="anno-tool color" data-anno="color" title="색상" id="annoColorBtn" aria-expanded="false">
           <span class="anno-dot" id="annoColorDot"></span>
         </button>
         <span class="anno-sep"></span>
         <button type="button" class="anno-tool" data-anno="undo" title="실행 취소">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M8 8H4v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 11a7.5 7.5 0 101.2-4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M11 6.5L6.2 9.8 11 13.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7.2 9.8H14a5.2 5.2 0 110 10.4H8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
         </button>
         <button type="button" class="anno-tool" data-anno="redo" title="다시 실행">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M16 8h4v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 11a7.5 7.5 0 11-1.2-4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M13 6.5l4.8 3.3L13 13.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16.8 9.8H10a5.2 5.2 0 000 10.4h5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
         </button>
         <button type="button" class="anno-tool" data-anno="clear" title="모두 지우기">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M5 7h14M9 7V5h6v2M7 7l1 13h8l1-13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7.2 7.4h9.6l-.7 12.2a2.1 2.1 0 01-2.1 1.9H10a2.1 2.1 0 01-2.1-1.9L7.2 7.4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            <path d="M5 7.4h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M9.6 5.6h4.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M10.2 11.2v6.2M13.8 11.2v6.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
         </button>
         </div>
       </div>
@@ -885,22 +911,11 @@
     </div>
   </div>
 
-  <div class="modal sm" id="panelEnd">
-    <div class="modal-head">
-      <h3>수업을 종료할까요?</h3>
-      <button class="close-x" data-close>&times;</button>
-    </div>
-    <div class="improve"><span class="tag">개선</span><p>종료와 함께 참여·활동 요약이 저장되어, 다음 수업에서 이어서 볼 수 있습니다.</p></div>
-    <div class="modal-body">
-      <div class="report-grid">
-        <div><b id="repTime">00:11</b><span>수업 시간</span></div>
-        <div><b>24/24</b><span>접속 학생</span></div>
-        <div><b>18/24</b><span>활동 완료</span></div>
-      </div>
-      <div class="form-actions">
-        <button type="button" data-close>계속 수업</button>
-        <button type="button" id="endConfirm" style="background:var(--orange);color:#fff;border-color:var(--orange)">종료하고 저장</button>
-      </div>
+  <div class="modal end-modal" id="panelEnd" role="dialog" aria-modal="true" aria-labelledby="endMsg">
+    <p class="end-msg" id="endMsg">학습 이력을 전송하고,<br>수업을 종료할까요?</p>
+    <div class="end-actions">
+      <button type="button" data-close>취소</button>
+      <button type="button" class="end-ok" id="endConfirm">확인</button>
     </div>
   </div>
 
