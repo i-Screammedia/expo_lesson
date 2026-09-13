@@ -1468,17 +1468,19 @@ body.is-annotating .slide-zoom { pointer-events: none; }
   box-shadow: 0 0 0 1px #4c84f5;
 }
 .toc-thumb {
-  height: 148px;
+  height: auto;
   background: #fff;
   position: relative;
   overflow: hidden;
+  padding: 8px 8px 0;
   border-bottom: 1px solid #f0f0f0;
 }
 .toc-thumb img {
   width: 100%;
-  height: 118%;
-  object-fit: cover;
-  object-position: top center;
+  height: auto;
+  aspect-ratio: 1920 / 728;
+  object-fit: contain;
+  object-position: center;
   display: block;
   background: #fff;
 }
