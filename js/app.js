@@ -17,6 +17,7 @@
     { page: 8, title: "해당하는 표정에 색칠하세요" }
   ];
   const PAGE_COUNT = TOC.length;
+  const IDLE_RESET_MS = 2 * 60 * 1000;
   const LEVEL_META = {
     green: { label: "성취 상" },
     yellow: { label: "성취 중" },
@@ -1639,6 +1640,26 @@
 
   renderPage();
   requestAnimationFrame(() => anno.resize());
+
+  let idleTimer;
+  function isFreshHome() {
+    if (state.page !== 1 || state.annotating || state.locked || state.sharing) return false;
+    return !document.querySelector(".modal.show, .toc-panel.show, .stage.show, .panel.show, .drawer.show");
+  }
+  function armIdleReset() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      if (isFreshHome()) {
+        armIdleReset();
+        return;
+      }
+      location.reload();
+    }, IDLE_RESET_MS);
+  }
+  ["pointerdown", "keydown", "touchstart", "wheel"].forEach((type) => {
+    document.addEventListener(type, armIdleReset, { passive: true });
+  });
+  armIdleReset();
 
   const boot = location.hash.replace("#", "");
   if (boot === "ai") openPanel("ai");
