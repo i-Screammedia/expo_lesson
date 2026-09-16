@@ -2759,6 +2759,7 @@ body.is-annotating .slide-zoom { pointer-events: none; }
   pointer-events: none;
 }
 .game-unit-bubble.show { display: flex; }
+.game-unit-bubble[hidden] { display: none !important; }
 .game-unit-bubble::before {
   content: "";
   position: absolute;
