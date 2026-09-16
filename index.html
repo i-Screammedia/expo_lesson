@@ -6,7 +6,7 @@
   <title>5. 직육면체 | AIDT 수업 화면 (데모)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" />
-  <link rel="stylesheet" href="css/style.css?v=png75" />
+  <link rel="stylesheet" href="css/style.css?v=png79" />
 </head>
 <body class="is-demo">
   <div class="app">
@@ -793,14 +793,30 @@
   <div class="modal game-modal" id="panelGame">
     <div class="game-top">
       <div class="game-unit-wrap">
-        <button type="button" class="game-unit" id="gameUnit" aria-expanded="false">
-          <span id="gameUnitLabel">5. 직육면체</span>
-          <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="game-unit-menu" id="gameUnitMenu" hidden>
-          <button type="button" data-unit="5. 합동과 대칭">5. 합동과 대칭</button>
-          <button type="button" data-unit="5. 직육면체" class="on">5. 직육면체</button>
-          <button type="button" data-unit="7. 원의 넓이">7. 원의 넓이</button>
+        <div class="game-unit-select">
+          <button type="button" class="game-unit" id="gameUnit" aria-expanded="false">
+            <span id="gameUnitLabel">5. 직육면체</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="game-unit-menu" id="gameUnitMenu" hidden>
+            <button type="button" data-unit="1. 수의 범위와 어림하기">1. 수의 범위와 어림하기</button>
+            <button type="button" data-unit="2. 분수의 곱셈">2. 분수의 곱셈</button>
+            <button type="button" data-unit="3. 합동과 대칭">3. 합동과 대칭</button>
+            <button type="button" data-unit="4. 소수의 곱셈">4. 소수의 곱셈</button>
+            <button type="button" data-unit="5. 직육면체" class="on">5. 직육면체</button>
+            <button type="button" data-unit="6. 평균과 가능성">6. 평균과 가능성</button>
+          </div>
+          <div class="game-unit-bubble" id="gameUnitBubble" role="status" hidden>
+            <span class="tag">안내</span>
+            <div>
+              <p>실제 수업에서는 단원에 맞는 게임이 열립니다.</p>
+              <p>이 화면에서는 5. 직육면체 단원의 내용으로만 체험이 가능합니다.</p>
+            </div>
+          </div>
+        </div>
+        <div class="game-unit-hint">
+          <span class="tag">안내</span>
+          <p>본 모니터에서는 매쓰애니멀런 게임 (5. 직육면체)만 실행됩니다.</p>
         </div>
       </div>
       <div class="game-toggle-wrap" id="gameToggleWrap">
@@ -955,6 +971,6 @@
     <p class="result-pop-note">실제 수업 화면과 다를 수 있습니다</p>
     <p class="result-pop-msg" id="resultPopMsg"></p>
   </div>
-  <script src="js/app.js?v=png66"></script>
+  <script src="js/app.js?v=png67"></script>
 </body>
 </html>
