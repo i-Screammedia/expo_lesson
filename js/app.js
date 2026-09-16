@@ -542,10 +542,18 @@
 
   /* Game */
   const gameMenu = $("#gameUnitMenu");
+  const DEMO_UNIT = "5. 직육면체";
+  const unitBubble = $("#gameUnitBubble");
   function closeGameMenu() {
     if (!gameMenu) return;
     gameMenu.hidden = true;
     $("#gameUnit")?.setAttribute("aria-expanded", "false");
+  }
+  function setUnitBubble(unit) {
+    const show = unit !== DEMO_UNIT;
+    unitBubble?.classList.toggle("show", show);
+    if (show) unitBubble?.removeAttribute("hidden");
+    else unitBubble?.setAttribute("hidden", "");
   }
   $("#gameSwitch")?.addEventListener("click", () => {
     setGameSwitch(!$("#gameSwitch").classList.contains("on"));
@@ -563,6 +571,7 @@
     $$("[data-unit]", gameMenu).forEach((b) => b.classList.toggle("on", b === item));
     $("#gameUnitLabel").textContent = item.dataset.unit;
     $$(".game-card > span").forEach((s) => { s.textContent = item.dataset.unit; });
+    setUnitBubble(item.dataset.unit);
     closeGameMenu();
   });
   document.addEventListener("click", closeGameMenu);
