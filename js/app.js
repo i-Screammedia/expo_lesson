@@ -544,16 +544,27 @@
   const gameMenu = $("#gameUnitMenu");
   const DEMO_UNIT = "5. 직육면체";
   const unitBubble = $("#gameUnitBubble");
+  let unitBubbleTimer;
   function closeGameMenu() {
     if (!gameMenu) return;
     gameMenu.hidden = true;
     $("#gameUnit")?.setAttribute("aria-expanded", "false");
   }
+  function hideUnitBubble() {
+    clearTimeout(unitBubbleTimer);
+    unitBubble?.classList.remove("show");
+    unitBubble?.setAttribute("hidden", "");
+  }
   function setUnitBubble(unit) {
-    const show = unit !== DEMO_UNIT;
-    unitBubble?.classList.toggle("show", show);
-    if (show) unitBubble?.removeAttribute("hidden");
-    else unitBubble?.setAttribute("hidden", "");
+    const isDemo = unit === DEMO_UNIT || unit.startsWith("1.");
+    if (isDemo) {
+      hideUnitBubble();
+      return;
+    }
+    unitBubble?.classList.add("show");
+    unitBubble?.removeAttribute("hidden");
+    clearTimeout(unitBubbleTimer);
+    unitBubbleTimer = setTimeout(hideUnitBubble, 2800);
   }
   $("#gameSwitch")?.addEventListener("click", () => {
     setGameSwitch(!$("#gameSwitch").classList.contains("on"));
@@ -576,6 +587,7 @@
   });
   document.addEventListener("click", closeGameMenu);
   $$("[data-game]").forEach((b) => b.addEventListener("click", () => {
+    hideUnitBubble();
     const href = b.dataset.href;
     if (href) {
       closeAll();
