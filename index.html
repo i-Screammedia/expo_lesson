@@ -6,9 +6,47 @@
   <title>5. 직육면체 | AIDT 수업 화면 (데모)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" />
-  <link rel="stylesheet" href="css/style.css?v=png80" />
+  <link rel="stylesheet" href="css/style.css?v=share-pop" />
 </head>
-<body class="is-demo">
+<body class="is-demo is-lobby">
+  <div class="lobby" id="lobby">
+    <div class="lobby-shot">
+      <div class="lobby-shot-fit">
+        <img src="img/lobby-home.png?v=fill" alt="교사 홈">
+        <button type="button" class="lobby-catch" id="lobbyCatch" aria-label="수업 바로 시작하기를 눌러 주세요"></button>
+        <button type="button" class="lobby-hot start" id="lobbyQuickStart" aria-label="수업 바로 시작하기"></button>
+        <button type="button" class="lobby-hot ready" id="lobbyReady" aria-label="수업 준비"></button>
+        <div class="lobby-start-tip" aria-hidden="true">
+          <span class="tag">안내</span>
+          <p>수업을 시작하려면 이 버튼을 클릭해주세요.</p>
+        </div>
+        <div class="lobby-toast" id="lobbyToast" role="status"></div>
+      </div>
+    </div>
+
+    <div class="lobby-dim" id="lobbyDim"></div>
+    <div class="lobby-modal" id="lobbyModal" role="dialog" aria-modal="true" aria-labelledby="lobbyTitle">
+      <h2 id="lobbyTitle">6. 다각형</h2>
+      <p class="lobby-sub">대각선을 알아 볼까요요</p>
+      <hr>
+      <p class="lobby-msg">수업을 시작합니다. 학생이 수업에 입장합니다.</p>
+      <div class="lobby-counts">
+        <button type="button" class="lobby-stat on" data-lobby-tab="on">접속 <b>1</b></button>
+        <button type="button" class="lobby-stat wait" data-lobby-tab="wait">미접속 <b>2</b></button>
+        <button type="button" class="lobby-refresh" id="lobbyRefresh" aria-label="새로고침">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M19 12a7 7 0 11-1.7-4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M19 5v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="lobby-students" id="lobbyStudents">
+        <div class="lobby-stu">1번 박도윤</div>
+      </div>
+      <div class="lobby-actions">
+        <button type="button" id="lobbyCancel">취소</button>
+        <button type="button" class="go" id="lobbyStart">시작</button>
+      </div>
+    </div>
+  </div>
+
   <div class="app">
     <header class="header">
       <div class="header-left">
@@ -46,7 +84,7 @@
           </button>
         </span>
         <span style="position:relative">
-          <button class="icon-btn" id="btnShare" data-feature="share" aria-label="주목하기">
+          <button class="icon-btn" id="btnShare" data-feature="share" aria-label="주목하기" aria-pressed="false">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
           </button>
         </span>
@@ -264,6 +302,11 @@
           <div class="hot ex-tag t8" id="reflectHintTag" role="tooltip">학생이 배운 내용에 대한 이해도를<br>스스로 판단해볼 수 있습니다.</div>
         </div></div>
       </section>
+      </div>
+      <div class="share-pop" id="sharePop" hidden>
+        <div class="share-pop-card">
+          <img src="img/student-focus.png" alt="선생님 화면에 집중하세요.">
+        </div>
       </div>
       <div class="share-banner" id="shareBanner">학생 화면을 가렸습니다.</div>
       <canvas class="anno-overlay" id="annoCanvas" aria-label="판서 화면"></canvas>
@@ -971,6 +1014,6 @@
     <p class="result-pop-note">실제 수업 화면과 다를 수 있습니다</p>
     <p class="result-pop-msg" id="resultPopMsg"></p>
   </div>
-  <script src="js/app.js?v=png68"></script>
+  <script src="js/app.js?v=share-pop"></script>
 </body>
 </html>
