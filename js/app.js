@@ -5,6 +5,8 @@
     "오지훈", "배수아", "송하준", "권서윤", "황도현", "안채원",
     "문지후", "백소율", "남하람", "홍은우", "양서진", "고민재"
   ];
+  const LOBBY_CONNECTED = ["1번 박도윤"];
+  const LOBBY_WAITING = ["2번 이서연", "3번 김민준"];
 
   const TOC = [
     { page: 1, title: "이번 시간에 공부할 내용" },
@@ -358,7 +360,13 @@
   function toggleShare() {
     state.sharing = !state.sharing;
     $("#btnShare").classList.toggle("active", state.sharing);
+    $("#btnShare")?.setAttribute("aria-pressed", String(state.sharing));
     $("#shareBanner").classList.toggle("on", state.sharing);
+    const pop = $("#sharePop");
+    if (pop) {
+      pop.classList.toggle("on", state.sharing);
+      pop.hidden = !state.sharing;
+    }
   }
   function toggleAnno() {
     state.annotating = !state.annotating;
@@ -635,18 +643,12 @@
     closeAll();
     toast("오류 신고가 접수되었습니다. 감사합니다.");
   });
-  $("#endConfirm").addEventListener("click", () => {
-    closeAll();
-    toast("수업이 저장되고 종료되었습니다. (데모)");
-  });
-  $("#logoutConfirm").addEventListener("click", () => {
-    closeAll();
-    toast("로그아웃되었습니다. 수업 상태는 저장되어 있습니다.");
-  });
-  $("#backLeave")?.addEventListener("click", () => {
-    closeAll();
-    toast("수업을 종료하고 나갑니다. (데모)");
-  });
+  function returnToLobby() {
+    location.reload();
+  }
+  $("#endConfirm").addEventListener("click", returnToLobby);
+  $("#logoutConfirm").addEventListener("click", returnToLobby);
+  $("#backLeave")?.addEventListener("click", returnToLobby);
 
   /* Annotation canvas */
   const annoCanvas = $("#annoCanvas");
@@ -1664,6 +1666,7 @@
 
   let idleTimer;
   function isFreshHome() {
+    if (document.body.classList.contains("is-lobby")) return true;
     if (state.page !== 1 || state.annotating || state.locked || state.sharing) return false;
     return !document.querySelector(".modal.show, .toc-panel.show, .stage.show, .panel.show, .drawer.show");
   }
@@ -1682,10 +1685,76 @@
   });
   armIdleReset();
 
-  const boot = location.hash.replace("#", "");
-  if (boot === "ai") openPanel("ai");
-  else if (boot === "game") openPanel("game");
-  else if (boot === "timer" || boot === "pick" || boot === "draw" || boot === "toolkit") openPanel("toolkit");
-  else if (boot === "monitor") { renderStudents(); openPanel("monitor"); }
-  else if (boot && panels[boot]) openPanel(boot);
+  function consumeHash() {
+    const boot = location.hash.replace("#", "");
+    if (boot === "ai") openPanel("ai");
+    else if (boot === "game") openPanel("game");
+    else if (boot === "timer" || boot === "pick" || boot === "draw" || boot === "toolkit") openPanel("toolkit");
+    else if (boot === "monitor") { renderStudents(); openPanel("monitor"); }
+    else if (boot && panels[boot]) openPanel(boot);
+  }
+
+  function lobbyCountText(n) {
+    return n ? String(n) : "-";
+  }
+  function renderLobbyStudents(tab) {
+    const list = $("#lobbyStudents");
+    if (!list) return;
+    const names = tab === "wait" ? LOBBY_WAITING : LOBBY_CONNECTED;
+    const onCount = $("#lobbyModal [data-lobby-tab='on'] b");
+    const waitCount = $("#lobbyModal [data-lobby-tab='wait'] b");
+    if (onCount) onCount.textContent = lobbyCountText(LOBBY_CONNECTED.length);
+    if (waitCount) waitCount.textContent = lobbyCountText(LOBBY_WAITING.length);
+    if (!names.length) {
+      list.classList.add("is-empty");
+      list.innerHTML = `<p class="lobby-empty">${tab === "wait" ? "미접속 학생이 없습니다." : "접속한 학생이 없습니다."}</p>`;
+    } else {
+      list.classList.remove("is-empty");
+      list.innerHTML = names.map((name) => `<div class="lobby-stu">${name}</div>`).join("");
+    }
+    $$(".lobby-stat").forEach((btn) => btn.classList.toggle("on", btn.dataset.lobbyTab === tab));
+  }
+  function openLobbyModal() {
+    document.body.classList.add("is-lobby-modal");
+    $("#lobbyDim")?.classList.add("show");
+    $("#lobbyModal")?.classList.add("show");
+    renderLobbyStudents("on");
+  }
+  function closeLobbyModal() {
+    document.body.classList.remove("is-lobby-modal");
+    $("#lobbyDim")?.classList.remove("show");
+    $("#lobbyModal")?.classList.remove("show");
+  }
+  function enterLesson() {
+    document.body.classList.remove("is-lobby");
+    closeLobbyModal();
+    requestAnimationFrame(() => anno.resize());
+    consumeHash();
+  }
+  renderLobbyStudents("on");
+  $$("[data-lobby-tab]").forEach((btn) => {
+    btn.addEventListener("click", () => renderLobbyStudents(btn.dataset.lobbyTab));
+  });
+  $("#lobbyRefresh")?.addEventListener("click", () => {
+    const btn = $("#lobbyRefresh");
+    btn.classList.remove("spin");
+    void btn.offsetWidth;
+    btn.classList.add("spin");
+    const tab = $(".lobby-stat.on")?.dataset.lobbyTab || "on";
+    renderLobbyStudents(tab);
+  });
+  $("#lobbyStart")?.addEventListener("click", enterLesson);
+  $("#lobbyCancel")?.addEventListener("click", closeLobbyModal);
+  $("#lobbyQuickStart")?.addEventListener("click", openLobbyModal);
+  $("#lobbyReady")?.addEventListener("click", openLobbyModal);
+  $("#lobbyLessonItem")?.addEventListener("click", openLobbyModal);
+  let lobbyHintTimer;
+  $("#lobbyCatch")?.addEventListener("click", () => {
+    const el = $("#lobbyToast");
+    if (!el) return;
+    el.textContent = "시연은 ‘수업 바로 시작하기’ 버튼으로 진행됩니다.";
+    el.classList.add("show");
+    clearTimeout(lobbyHintTimer);
+    lobbyHintTimer = setTimeout(() => el.classList.remove("show"), 1800);
+  });
 })();
